@@ -15,11 +15,14 @@ public class PuzzleGenerator : MonoBehaviour
     [Header("Puzzle prefabs Settings")]
     [SerializeField] private GameObject[] puzzlePrefabs;
 
-
+    //private Dictionary<string, int[4], GameObject> dict = new System.Collections.Generic.Dictionary<string, int[], GameObject>();
 
     private void Awake()
     {
-        
+        foreach (var prefab in puzzlePrefabs)
+        {
+             //prefab.
+        }
     }
 
 
