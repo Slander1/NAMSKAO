@@ -8,28 +8,33 @@ using Random = UnityEngine.Random;
 //  возможно стоит сделать статическим
 public class PiecesCollection
 {
-	private List<PiecePazzle> _cornerCollection = new List<PiecePazzle>();
-	private List<PiecePazzle> _edgeCollection = new List<PiecePazzle>();
-	private List<PiecePazzle> _centerCollection = new List<PiecePazzle>();
+	private readonly List<PiecePazzle> _cornerCollection = new();
+	private readonly List<PiecePazzle> _edgeCollection = new();
+	private readonly List<PiecePazzle> _centerCollection = new();
 
 	public PiecesCollection(GameObject[] piecesPrefabs)
 	{
 		foreach (var piecePrefab in piecesPrefabs)
 		{
 			piecePrefab.TryGetComponent<PiecePazzle>(out var pieceData);
+
 			if (pieceData == null)
 				continue;
+
             switch (pieceData.namePos)
             {
 				case NamePos.CORNER:
 					_cornerCollection.Add(pieceData);
 					break;
+
 				case NamePos.EDGE:
 					_edgeCollection.Add(pieceData);
 					break;
+
 				case NamePos.CENTER:
 					_centerCollection.Add(pieceData);
 					break;
+
 				default:
                     break;
             }
@@ -39,13 +44,12 @@ public class PiecesCollection
 	}
 
 
-	public PiecePazzle FindSuitablePazzle(int[] tips, Vector2Int pos, out int coefficientShift)
-		// подумать над протаскиванием пременной через 3 класса
+	public PiecePazzle FindSuitablePazzle(int[] tips, Vector2Int pos)
 	{
-		
-		//coefficientShift = 0;
-		PieceRotation.ShiftTips(pos, tips, out coefficientShift); //Проверять на центр
+		PieceRotation.ShiftTips(pos, tips); //Проверять на центр
+
 		var randomizeTips = RandomizeTips(tips);
+
 		List<PiecePazzle> collection = null;
 		// переработать на систему по позициям
 		switch (randomizeTips.Count)
@@ -53,12 +57,15 @@ public class PiecesCollection
 			case 2:
 				collection = _cornerCollection;
 				break;
+
 			case 3:
 				collection = _edgeCollection;
 				break;
+
 			case 4:
 				collection = _centerCollection;
 				break;
+
 			default:
 				break;
 		}
@@ -75,6 +82,7 @@ public class PiecesCollection
 	private List<int> RandomizeTips(int[] tips)
     {
 		var RandomTips = new List<int>();
+
         for (int i = 0; i < tips.Length; i++)
         {
 			if (tips[i] == (int)PossibleTips.indefinitely)

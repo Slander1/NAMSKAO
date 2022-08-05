@@ -19,9 +19,9 @@ public static class PieceRotation
         piece.transform.Rotate(0, 0, _coefMatrix[pos.y, pos.x]);
     }
 
-    public static void ShiftTips(Vector2Int pos, int[] tips, out int coefficientShift)
+    public static void ShiftTips(Vector2Int pos, int[] tips)
     {
-        coefficientShift = SearchCoefficient(pos);
+        var coefficientShift = SearchCoefficient(pos);
         if (coefficientShift == 0)
             return;
         var tipsCopy = (int[])tips.Clone();
@@ -37,15 +37,15 @@ public static class PieceRotation
         var rotation = 0;
 
         if (pos.y == 0)
-            rotation = (pos.x == PuzzleGenerator.Instanse.Columns - 1) ? 90 : 0;
+            rotation = (pos.x == PuzzleGenerator.Instanse.ColumnsCount - 1) ? 90 : 0;
 
-        else if (pos.y == PuzzleGenerator.Instanse.Rows - 1)
+        else if (pos.y == PuzzleGenerator.Instanse.RowsCount - 1)
         {
             coef = (pos.x == 0) ? 1 : 0;
             rotation = (pos.x == 0) ? 270 : 180;
         }
 
-        else if (pos.x == PuzzleGenerator.Instanse.Columns - 1)
+        else if (pos.x == PuzzleGenerator.Instanse.ColumnsCount - 1)
             rotation = 90;
 
 
