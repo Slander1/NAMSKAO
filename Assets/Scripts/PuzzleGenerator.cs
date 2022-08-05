@@ -62,12 +62,22 @@ public class PuzzleGenerator : MonoBehaviour
             for (int j = 0; j < Columns; j++)
             {
                 CheckSides(new Vector2Int(j, i));
-                var tempary = new List<int>(); // заменить структуру
-                string deblog = "";
-                
+                string deb = "";
+                for (int k = 0; k < 4; k++)
+                {
+                    deb += _matrixForGenerate[i, j][k].ToString() + "";//
+                }
+                Debug.Log("Before " + deb);
                 var piecePuzzle = _piecesCollections.FindSuitablePazzle(_matrixForGenerate[i, j]); //FIX THIS
                 if (piecePuzzle != null)
                     _GeneretedPieces[i, j] = piecePuzzle.gameObject;
+                deb = "";
+                for (int k = 0; k < 4; k++)
+                {
+                    deb += _matrixForGenerate[i, j][k].ToString() + "";//
+                }
+                Debug.Log("After " + deb);
+                deb = "";
             }
         }
         InstatiatePuzzles();
@@ -89,7 +99,7 @@ public class PuzzleGenerator : MonoBehaviour
                 if (_GeneretedPieces[i, j] != null)
                 { 
                     var currPiece = Instantiate(_GeneretedPieces[i,j].gameObject);
-                    currPiece.transform.position = new Vector3((i * 10), (j * 10), 0);
+                    currPiece.transform.position = new Vector3((j * -3f), (i * -3f), 0);
                 }
             }
         }
@@ -105,24 +115,24 @@ public class PuzzleGenerator : MonoBehaviour
         var checkPrevElemTips_x = (sideStartGenereation_x == 1) ? 0 : 2;
         var checkPrevElemTips_y = (sideStartGenereation_y == 1) ? 3 : 1;
 
-        for (var i = 0; i<_steps.Count; i++)
+        for (var i = 0; i < _steps.Count; i++)
         {
             if (currPos.x + _steps[i].x < 0 || currPos.x + _steps[i].x >= Columns ||
                 currPos.y + _steps[i].y < 0 || currPos.y + _steps[i].y >= Rows)
-                _matrixForGenerate[currPos.x, currPos.y][i] = (int)PossibleTips.STRAIGHT;
+                _matrixForGenerate[currPos.y, currPos.x][i] = (int)PossibleTips.STRAIGHT;
 
             else if (_steps[i].x == sideStartGenereation_x)
-                _matrixForGenerate[currPos.x, currPos.y][i] =
-                    (_matrixForGenerate[currPos.x + _steps[i].x, currPos.y] [checkPrevElemTips_x] ==
+                _matrixForGenerate[currPos.y, currPos.x][i] =
+                    (_matrixForGenerate[currPos.y, currPos.x + _steps[i].x] [checkPrevElemTips_x] ==
                     (int)PossibleTips.CAVITY) ? (int)PossibleTips.CONVEX : (int)PossibleTips.CAVITY;
 
             else if (_steps[i].y == sideStartGenereation_y)
-                _matrixForGenerate[currPos.x, currPos.y] [i] =
-                    (_matrixForGenerate[currPos.x, currPos.y + _steps[i].y] [checkPrevElemTips_y] ==
+                _matrixForGenerate[currPos.y, currPos.x] [i] =
+                    (_matrixForGenerate[currPos.y + _steps[i].y, currPos.x] [checkPrevElemTips_y] ==
                     (int)PossibleTips.CAVITY) ? (int)PossibleTips.CONVEX : (int)PossibleTips.CAVITY;
 
             else
-                _matrixForGenerate[currPos.x, currPos.y][i] =
+                _matrixForGenerate[currPos.y, currPos.x][i] =
                     (int)PossibleTips.indefinitely;
         }
     }
