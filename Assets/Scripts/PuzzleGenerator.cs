@@ -4,11 +4,13 @@ using UnityEngine;
 
 public enum PossibleTips
 {
-    CONVEX = 0,
-    CAVITY = 1,
+    CAVITY = 0,
+    CONVEX = 1,
     STRAIGHT = 2,
     indefinitely = 3
 }
+// проверить названия
+// columns
 
 public class PuzzleGenerator : MonoBehaviour
 {
@@ -17,16 +19,14 @@ public class PuzzleGenerator : MonoBehaviour
 
     [Header("Tiles Settings")]
     public int seed;
-    [SerializeField] private int Columns = 4;
-    [SerializeField] private int Rows = 4;
+    public int Columns = 4;
+    public int Rows = 4;
 
     [Header("Texture2D Settings")]
     [SerializeField] private Texture2D texture2D;
 
     [Header("Puzzle prefabs Settings")]
     [SerializeField] private GameObject[] puzzlePrefabs;
-
-    private const int possibleSides = 4; // подумать над названиаем;
 
     private PiecesCollection _piecesCollections;
     private int [,][] _matrixForGenerate;
@@ -53,6 +53,7 @@ public class PuzzleGenerator : MonoBehaviour
 
     private void GenerateGridPuzles()
     {
+        PieceRotation.Init(Rows, Columns);
         _matrixForGenerate = new int[Rows, Columns][];
         _GeneretedPieces = new GameObject[Rows, Columns];
         InivializeArray(); // потом заменить на нормальную инициализацю.
@@ -62,25 +63,25 @@ public class PuzzleGenerator : MonoBehaviour
             for (int j = 0; j < Columns; j++)
             {
                 CheckSides(new Vector2Int(j, i));
-                string deb = "";
-                for (int k = 0; k < 4; k++)
-                {
-                    deb += _matrixForGenerate[i, j][k].ToString() + "";//
-                }
-                Debug.Log("Before " + deb);
-                var piecePuzzle = _piecesCollections.FindSuitablePazzle(_matrixForGenerate[i, j]); //FIX THIS
+                DebLog(_matrixForGenerate[i, j], "after");
+                var piecePuzzle = _piecesCollections.FindSuitablePazzle(_matrixForGenerate[i, j],
+                    new Vector2Int(j, i), out var coeficentRotation); //FIX THIS
                 if (piecePuzzle != null)
                     _GeneretedPieces[i, j] = piecePuzzle.gameObject;
-                deb = "";
-                for (int k = 0; k < 4; k++)
-                {
-                    deb += _matrixForGenerate[i, j][k].ToString() + "";//
-                }
-                Debug.Log("After " + deb);
-                deb = "";
+                DebLog(_matrixForGenerate[i, j], "before");
             }
         }
         InstatiatePuzzles();
+    }
+
+    private void DebLog(int[] arr, string z)
+    {
+        string test = "";
+        for (int i = 0; i < arr.Length; i++)
+        {
+            test += arr[i] + " ";
+        }
+        Debug.Log(z + test);
     }
 
     private void InivializeArray()
@@ -99,6 +100,7 @@ public class PuzzleGenerator : MonoBehaviour
                 if (_GeneretedPieces[i, j] != null)
                 { 
                     var currPiece = Instantiate(_GeneretedPieces[i,j].gameObject);
+                    PieceRotation.RotatePiece(currPiece, new Vector2Int(j, i));
                     currPiece.transform.position = new Vector3((j * -3f), (i * -3f), 0);
                 }
             }

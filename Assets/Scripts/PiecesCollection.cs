@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Random = UnityEngine.Random;
 
+
+//  возможно стоит сделать статическим
 public class PiecesCollection
 {
 	private List<PiecePazzle> _cornerCollection = new List<PiecePazzle>();
@@ -31,16 +34,20 @@ public class PiecesCollection
                     break;
             }
 		}
+		// не работает InitState;
+		Random.InitState(PuzzleGenerator.Instanse.seed);
 	}
 
 
-	public PiecePazzle FindSuitablePazzle(int[] tips)
+	public PiecePazzle FindSuitablePazzle(int[] tips, Vector2Int pos, out int coefficientShift)
+		// подумать над протаскиванием пременной через 3 класса
 	{
-		UnityEngine.Random.InitState(PuzzleGenerator.Instanse.seed);
-		// подумать где лучше проиницилизовать, возможно в конструкторе
+		
+		//coefficientShift = 0;
+		PieceRotation.ShiftTips(pos, tips, out coefficientShift); //Проверять на центр
 		var randomizeTips = RandomizeTips(tips);
 		List<PiecePazzle> collection = null;
-
+		// переработать на систему по позициям
 		switch (randomizeTips.Count)
 		{
 			case 2:
@@ -55,6 +62,7 @@ public class PiecesCollection
 			default:
 				break;
 		}
+		
 		foreach (var piece in collection)
 		{
 			if (Enumerable.SequenceEqual(randomizeTips, piece.tipsPiece))
@@ -70,7 +78,8 @@ public class PiecesCollection
         for (int i = 0; i < tips.Length; i++)
         {
 			if (tips[i] == (int)PossibleTips.indefinitely)
-				tips[i] = UnityEngine.Random.Range((int)PossibleTips.CONVEX, (int)PossibleTips.CAVITY);
+				tips[i] = Random.Range((int)PossibleTips.CAVITY, (int)PossibleTips.CONVEX + 1);
+
 			if (tips[i]!= (int) PossibleTips.STRAIGHT)
 				RandomTips.Add(tips[i]);
 		}
