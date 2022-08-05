@@ -34,7 +34,7 @@ public class PiecesCollection
 	}
 
 
-	public PiecePazzle FindSuitablePazzle(List<int> tips)
+	public PiecePazzle FindSuitablePazzle(int[] tips)
 	{
 		UnityEngine.Random.InitState(PuzzleGenerator.Instanse.seed);
 		// подумать где лучше проиницилизовать, возможно в конструкторе
@@ -57,6 +57,7 @@ public class PiecesCollection
 		}
 		foreach (var piece in collection)
 		{
+			Debug.Log(randomizeTips.Count);
 			if (Enumerable.SequenceEqual(randomizeTips, piece.tipsPiece))
 				return piece;
 		}
@@ -83,13 +84,15 @@ public class PiecesCollection
 	//	return
 	//}
 
-	private List<int> RandomizeTips(List<int> tips)
+	private List<int> RandomizeTips(int[] tips)
     {
-		var RandomTips = tips.Where(tip => tip != (int)PossibleTips.STRAIGHT).ToList();
-        for (int i = 0; i < RandomTips.Count; i++)
+		var RandomTips = new List<int>();
+        for (int i = 0; i < tips.Length; i++)
         {
-			if (RandomTips[i] == (int)PossibleTips.indefinitely)
-				RandomTips[i] = UnityEngine.Random.Range((int)PossibleTips.CONVEX, (int)PossibleTips.CAVITY);
+			if (tips[i] == (int)PossibleTips.indefinitely)
+				tips[i] = UnityEngine.Random.Range((int)PossibleTips.CONVEX, (int)PossibleTips.CAVITY);
+			if (tips[i]!= (int) PossibleTips.STRAIGHT)
+				RandomTips.Add(tips[i]);
 		}
 			
 		return RandomTips;

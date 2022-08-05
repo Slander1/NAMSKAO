@@ -29,7 +29,7 @@ public class PuzzleGenerator : MonoBehaviour
     private const int possibleSides = 4; // подумать над названиаем;
 
     private PiecesCollection _piecesCollections;
-    private int[,,] _matrixForGenerate;
+    private int [,][] _matrixForGenerate;
     private GameObject[,] _GeneretedPieces;
 
     private List<Vector2Int> _steps => new List<Vector2Int>()
@@ -53,7 +53,7 @@ public class PuzzleGenerator : MonoBehaviour
 
     private void GenerateGridPuzles()
     {
-        _matrixForGenerate = new int[Rows, Columns, possibleSides];
+        _matrixForGenerate = new int[Rows, Columns][];
         _GeneretedPieces = new GameObject[Rows, Columns];
         InivializeArray(); // потом заменить на нормальную инициализацю.
 
@@ -61,16 +61,11 @@ public class PuzzleGenerator : MonoBehaviour
         {
             for (int j = 0; j < Columns; j++)
             {
-                CheckSides(new Vector2Int(i, j));
+                CheckSides(new Vector2Int(j, i));
                 var tempary = new List<int>(); // заменить структуру
                 string deblog = "";
-                for (int k = 0; k < possibleSides; k++)
-                {
-                    tempary.Add(_matrixForGenerate[i, j, k]);
-                    deblog += _matrixForGenerate[i, j, k].ToString() + " ";
-                }
                 
-                var piecePuzzle = _piecesCollections.FindSuitablePazzle(tempary); //FIX THIS
+                var piecePuzzle = _piecesCollections.FindSuitablePazzle(_matrixForGenerate[i, j]); //FIX THIS
                 if (piecePuzzle != null)
                     _GeneretedPieces[i, j] = piecePuzzle.gameObject;
             }
@@ -82,8 +77,7 @@ public class PuzzleGenerator : MonoBehaviour
     {
         for (var i = 0; i < Rows; i++)
             for (var j = 0; j < Columns; j++)
-                for (var k = 0; k < possibleSides; k++)
-                    _matrixForGenerate[i, j, k] = -1;
+                    _matrixForGenerate[i, j] = new int[4];
     }
 
     private void InstatiatePuzzles()
@@ -115,20 +109,20 @@ public class PuzzleGenerator : MonoBehaviour
         {
             if (currPos.x + _steps[i].x < 0 || currPos.x + _steps[i].x >= Columns ||
                 currPos.y + _steps[i].y < 0 || currPos.y + _steps[i].y >= Rows)
-                _matrixForGenerate[currPos.x, currPos.y, i] = (int)PossibleTips.STRAIGHT;
+                _matrixForGenerate[currPos.x, currPos.y][i] = (int)PossibleTips.STRAIGHT;
 
             else if (_steps[i].x == sideStartGenereation_x)
-                _matrixForGenerate[currPos.x, currPos.y, i] =
-                    (_matrixForGenerate[currPos.x + _steps[i].x, currPos.y, checkPrevElemTips_x] ==
+                _matrixForGenerate[currPos.x, currPos.y][i] =
+                    (_matrixForGenerate[currPos.x + _steps[i].x, currPos.y] [checkPrevElemTips_x] ==
                     (int)PossibleTips.CAVITY) ? (int)PossibleTips.CONVEX : (int)PossibleTips.CAVITY;
 
             else if (_steps[i].y == sideStartGenereation_y)
-                _matrixForGenerate[currPos.x, currPos.y, i] =
-                    (_matrixForGenerate[currPos.x, currPos.y + _steps[i].y, checkPrevElemTips_y] ==
+                _matrixForGenerate[currPos.x, currPos.y] [i] =
+                    (_matrixForGenerate[currPos.x, currPos.y + _steps[i].y] [checkPrevElemTips_y] ==
                     (int)PossibleTips.CAVITY) ? (int)PossibleTips.CONVEX : (int)PossibleTips.CAVITY;
 
             else
-                _matrixForGenerate[currPos.x, currPos.y, i] =
+                _matrixForGenerate[currPos.x, currPos.y][i] =
                     (int)PossibleTips.indefinitely;
         }
     }
