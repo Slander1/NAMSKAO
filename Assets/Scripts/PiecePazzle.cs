@@ -9,7 +9,7 @@ public enum NamePos
 
 public class PiecePazzle : MonoBehaviour
 {
-	[SerializeField] private NamePos namePos;
-	[SerializeField] private int[] tipsPiece;
+	public NamePos namePos;
+	public int[] tipsPiece;
 }
 
