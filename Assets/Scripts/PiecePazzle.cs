@@ -16,9 +16,9 @@ public class PiecePazzle : MonoBehaviour
 public class PieceData
 {
 	public NamePos namePos;
-	public PossibleTips[] tipsPiece;
+	public TipsVariant[] tipsPiece;
 
-	public PieceData(NamePos namePos, PossibleTips[] tipsPiece)
+	public PieceData(NamePos namePos, TipsVariant[] tipsPiece)
 	{
 		this.namePos = namePos;
 		this.tipsPiece = tipsPiece;

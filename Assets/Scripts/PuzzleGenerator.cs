@@ -1,9 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 // подумать над правильностью
-public enum PossibleTips
+public enum TipsVariant
 {
     CAVITY = 0,
     CONVEX = 1,
@@ -19,6 +20,7 @@ public class PuzzleGenerator : MonoBehaviour
 {
     public static PuzzleGenerator Instanse { get; private set; }
 
+
     [Header("Tiles Settings")]
     public int seed;
     public int ColumnsCount = 4;
@@ -30,17 +32,11 @@ public class PuzzleGenerator : MonoBehaviour
     [Header("Puzzle prefabs Settings")]
     [SerializeField] private PiecePazzle[] puzzlePrefabs;
 
-    private PiecesCollection _piecesCollections;
-    
-    //private PiecePazzle[,] _GeneretedPieces; // переделать в массив PieceCollection
+    [Header("Generated pazzle")]
+    public PiecePazzle[,] generatedPazzle;
 
-    private List<Vector2Int> _steps => new List<Vector2Int>()
-    {
-        new Vector2Int(-1, 0),
-        new Vector2Int(0, -1),
-        new Vector2Int(0, 0),
-        new Vector2Int(0, 0)
-    }; // попробовать убрать
+    private PiecesCollection _piecesCollections;
+
 
     private void Awake()
     {
@@ -56,7 +52,7 @@ public class PuzzleGenerator : MonoBehaviour
 
     private void GenerateGridPuzles()
     {
-        PieceRotation.Init(RowsCount, ColumnsCount);
+        generatedPazzle = new PiecePazzle[RowsCount, ColumnsCount];
         var randomEdgesHorizaontal = new bool[RowsCount, ColumnsCount - 1]; //  переиминовать
         var randomEdgesVertical = new bool[RowsCount - 1, ColumnsCount];
 
@@ -67,9 +63,9 @@ public class PuzzleGenerator : MonoBehaviour
             for (int x = 0; x < ColumnsCount; x++)
             {
                 if (x != ColumnsCount-1)
-                    randomEdgesHorizaontal[y, x] = Random.Range(0, 2) == 0;
+                    randomEdgesHorizaontal[y, x] = UnityEngine.Random.Range(0, 2) == 0;
                 if (y != RowsCount - 1)
-                    randomEdgesVertical[y, x] = Random.Range(0, 2) == 0;
+                    randomEdgesVertical[y, x] = UnityEngine.Random.Range(0, 2) == 0;
             }
         }
 
@@ -83,21 +79,13 @@ public class PuzzleGenerator : MonoBehaviour
                 var tips = CheckSides(pos, randomEdgesHorizaontal, randomEdgesVertical);
 
                 var piecePuzzle = _piecesCollections.FindSuitablePazzle(new PieceData(namePos, tips), pos);
-                var test = Instantiate(piecePuzzle);
-                PieceRotation.RotateTips(test, pos);
-                test.transform.position = new Vector3(-3 * x, -3 * y, 0);
+                var piecePazzle = Instantiate(piecePuzzle);
+                PieceRotation.RotateTips(piecePazzle, pos);
+                piecePazzle.transform.position = new Vector3(-3 * x, -3 * y, 0);
+                generatedPazzle[y, x] = piecePazzle;
             }
         }
-    }
-
-    private void DebLog(int[] arr, string z)// forCheck;
-    {
-        string test = "";
-        for (int i = 0; i < arr.Length; i++)
-        {
-            test += arr[i] + " ";
-        }
-        Debug.Log(z + test);
+        UVGenerator.GetVertexFromPazzle(generatedPazzle, texture2D);
     }
 
     private NamePos DefineNamePos(Vector2Int currPos)
@@ -115,25 +103,25 @@ public class PuzzleGenerator : MonoBehaviour
             return NamePos.CENTER;
     }
 
-    private PossibleTips[] CheckSides(Vector2Int curPos, bool [,] randomEdgesHorizontal, bool[,] randomEdgesVertical)
+    private TipsVariant[] CheckSides(Vector2Int curPos, bool [,] randomEdgesHorizontal, bool[,] randomEdgesVertical)
     {
-        var tips= new PossibleTips[4];
+        var tips= new TipsVariant[4];
 
         if (curPos.x != 0)
-            tips[0] = randomEdgesHorizontal[curPos.y , curPos.x - 1] ? PossibleTips.CONVEX : PossibleTips.CAVITY;
-        else tips[0] = PossibleTips.STRAIGHT;
+            tips[0] = randomEdgesHorizontal[curPos.y , curPos.x - 1] ? TipsVariant.CONVEX : TipsVariant.CAVITY;
+        else tips[0] = TipsVariant.STRAIGHT;
 
         if (curPos.y != 0)
-            tips[1] = randomEdgesVertical[curPos.y - 1, curPos.x] ? PossibleTips.CONVEX : PossibleTips.CAVITY;
-        else tips[1] = PossibleTips.STRAIGHT;
+            tips[1] = randomEdgesVertical[curPos.y - 1, curPos.x] ? TipsVariant.CONVEX : TipsVariant.CAVITY;
+        else tips[1] = TipsVariant.STRAIGHT;
 
         if (curPos.x != ColumnsCount -1)
-            tips[2] = randomEdgesHorizontal[curPos.y, curPos.x] ? PossibleTips.CAVITY : PossibleTips.CONVEX;
-        else tips[2] = PossibleTips.STRAIGHT;
+            tips[2] = randomEdgesHorizontal[curPos.y, curPos.x] ? TipsVariant.CAVITY : TipsVariant.CONVEX;
+        else tips[2] = TipsVariant.STRAIGHT;
 
         if (curPos.y != RowsCount - 1)
-            tips[3] = randomEdgesVertical[curPos.y, curPos.x] ? PossibleTips.CAVITY : PossibleTips.CONVEX;
-        else tips[3] = PossibleTips.STRAIGHT;
+            tips[3] = randomEdgesVertical[curPos.y, curPos.x] ? TipsVariant.CAVITY : TipsVariant.CONVEX;
+        else tips[3] = TipsVariant.STRAIGHT;
 
         return tips;
     }

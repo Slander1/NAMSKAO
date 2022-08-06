@@ -6,19 +6,6 @@ using UnityEngine;
 public static class PieceRotation
 {
 
-    private static int[,] _coefMatrix;
-
-
-    public static void Init(int RowsCount, int ColumsCount)
-    {
-        _coefMatrix = new int[RowsCount, ColumsCount];
-    }
-
-    public static void RotatePiece(GameObject piece, Vector2Int pos)
-    {
-        piece.transform.Rotate(0, 0, _coefMatrix[pos.y, pos.x]);
-    }
-
     public static void RotateTips(PiecePazzle piece, Vector2Int pos)
     {
         var coefficientShift = SearchCoefficient(pos);
@@ -41,7 +28,7 @@ public static class PieceRotation
     }
 
 
-        private static int SearchCoefficient(Vector2Int pos)
+    private static int SearchCoefficient(Vector2Int pos)
     {
         int columnsCount = PuzzleGenerator.Instanse.ColumnsCount;
         int rowsCount = PuzzleGenerator.Instanse.RowsCount;

@@ -8,15 +8,15 @@ using Random = UnityEngine.Random;
 //  возможно стоит сделать статическим
 public class PiecesCollection
 {
-    class A : IEqualityComparer<PossibleTips[]>
+    class A : IEqualityComparer<TipsVariant[]>
     {
-        bool IEqualityComparer<PossibleTips[]>.Equals(PossibleTips[] x, PossibleTips[] y)
+        bool IEqualityComparer<TipsVariant[]>.Equals(TipsVariant[] x, TipsVariant[] y)
         {
 			return (Enumerable.SequenceEqual(x, y));
 
 		}
 
-        int IEqualityComparer<PossibleTips[]>.GetHashCode(PossibleTips[] objects)
+        int IEqualityComparer<TipsVariant[]>.GetHashCode(TipsVariant[] objects)
         {
 			return 1;
 			int hash = objects.GetHashCode();
@@ -27,18 +27,16 @@ public class PiecesCollection
 			return hash;
 		}
     }
-    private Dictionary<NamePos, Dictionary<PossibleTips[], PiecePazzle>> _pices { get; }
+    private Dictionary<NamePos, Dictionary<TipsVariant[], PiecePazzle>> _pices { get; }
 
 	public PiecesCollection(PiecePazzle[] pieces)
 	{
-		_pices = new Dictionary<NamePos, Dictionary<PossibleTips[],PiecePazzle>> {
-			{ NamePos.CENTER, new Dictionary<PossibleTips[],PiecePazzle>(new A()) },
-			{ NamePos.CORNER, new Dictionary<PossibleTips[],PiecePazzle>(new A()) },
-			{ NamePos.EDGE,   new Dictionary<PossibleTips[],PiecePazzle>(new A()) } };
-		int a = 0;
+		_pices = new Dictionary<NamePos, Dictionary<TipsVariant[],PiecePazzle>> {
+			{ NamePos.CENTER, new Dictionary<TipsVariant[],PiecePazzle>(new A()) },
+			{ NamePos.CORNER, new Dictionary<TipsVariant[],PiecePazzle>(new A()) },
+			{ NamePos.EDGE,   new Dictionary<TipsVariant[],PiecePazzle>(new A()) } };
 		foreach (var piece in pieces)
 		{
-			Debug.Log(a++);
 			if (piece.PieceData.namePos == NamePos.CENTER)
 				_pices[piece.PieceData.namePos].Add(piece.PieceData.tipsPiece, piece);
 			else
@@ -91,16 +89,16 @@ public class PiecesCollection
 		return null;
 	}
 
-	private List<PossibleTips> RandomizeTips(PossibleTips[] tips)
+	private List<TipsVariant> RandomizeTips(TipsVariant[] tips)
     {
-		var RandomTips = new List<PossibleTips>();
+		var RandomTips = new List<TipsVariant>();
 
         for (int i = 0; i < tips.Length; i++)
         {
-			if (tips[i] == PossibleTips.UNCERTAIN)
-				tips[i] = (PossibleTips)Random.Range(0, 2);
+			if (tips[i] == TipsVariant.UNCERTAIN)
+				tips[i] = (TipsVariant)Random.Range(0, 2);
 
-			if (tips[i]!=  PossibleTips.STRAIGHT)
+			if (tips[i]!=  TipsVariant.STRAIGHT)
 				RandomTips.Add(tips[i]);
 		}
 			
