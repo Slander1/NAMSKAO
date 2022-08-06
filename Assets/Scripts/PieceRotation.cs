@@ -19,46 +19,43 @@ public static class PieceRotation
         piece.transform.Rotate(0, 0, _coefMatrix[pos.y, pos.x]);
     }
 
-    public static void ShiftTips(Vector2Int pos, int[] tips)
+    public static void RotateTips(PiecePazzle piece, Vector2Int pos)
     {
         var coefficientShift = SearchCoefficient(pos);
-        if (coefficientShift == 0)
-            return;
-        var tipsCopy = (int[])tips.Clone();
-        for (int i = 0; i < tips.Length; i++)
-        {
-            tips[(i + coefficientShift) % tips.Length] =tipsCopy [i];
-        }
+        piece.PieceData.tipsPiece = ShiftArray(piece.PieceData.tipsPiece, coefficientShift);
+        piece.transform.Rotate(0, 0, coefficientShift*90);
     }
 
-    private static int SearchCoefficient(Vector2Int pos)
+    public static T[] ShiftArray<T>(T[] array, int shiftCount)
     {
-        var coef = 0;
-        var rotation = 0;
+        if (shiftCount == 0)
+            return array; 
 
-        if (pos.y == 0)
-            rotation = (pos.x == PuzzleGenerator.Instanse.ColumnsCount - 1) ? 90 : 0;
-
-        else if (pos.y == PuzzleGenerator.Instanse.RowsCount - 1)
+        var cloneArray = (T[])array.Clone();
+        for (int i = 0; i < cloneArray.Length; i++)
         {
-            coef = (pos.x == 0) ? 1 : 0;
-            rotation = (pos.x == 0) ? 270 : 180;
+            var nextId = (i + shiftCount) % cloneArray.Length;
+            array[i] = cloneArray[nextId];
         }
-
-        else if (pos.x == PuzzleGenerator.Instanse.ColumnsCount - 1)
-            rotation = 90;
-
+        return array;
+    }
 
 
-        else if (pos.x == 0)
-        {
-            rotation = 270;
-            coef = 2;
-        }
+        private static int SearchCoefficient(Vector2Int pos)
+    {
+        int columnsCount = PuzzleGenerator.Instanse.ColumnsCount;
+        int rowsCount = PuzzleGenerator.Instanse.RowsCount;
 
+        if (pos.x == 0 && pos.y != 0)
+            return 3;
+         
+        if (pos.x != 0 && pos.y == rowsCount - 1)
+            return 2;
+        
+        if (pos.x == columnsCount - 1 && pos.y != rowsCount - 1)
+            return 1;
 
-        _coefMatrix[pos.y, pos.x] = rotation;
-        return coef;
+        return 0;
     }
 }
 

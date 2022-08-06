@@ -8,7 +8,7 @@ public enum PossibleTips
     CAVITY = 0,
     CONVEX = 1,
     STRAIGHT = 2,
-    indefinitely = 3
+    UNCERTAIN = 3
 }
 
 
@@ -28,18 +28,18 @@ public class PuzzleGenerator : MonoBehaviour
     [SerializeField] private Texture2D texture2D;
 
     [Header("Puzzle prefabs Settings")]
-    [SerializeField] private GameObject[] puzzlePrefabs;
+    [SerializeField] private PiecePazzle[] puzzlePrefabs;
 
     private PiecesCollection _piecesCollections;
-    private int [,][] _matrixForGenerate;
-    private GameObject[,] _GeneretedPieces;
+    
+    //private PiecePazzle[,] _GeneretedPieces; // переделать в массив PieceCollection
 
     private List<Vector2Int> _steps => new List<Vector2Int>()
     {
         new Vector2Int(-1, 0),
         new Vector2Int(0, -1),
-        new Vector2Int(1, 0),
-        new Vector2Int(0, 1)
+        new Vector2Int(0, 0),
+        new Vector2Int(0, 0)
     }; // попробовать убрать
 
     private void Awake()
@@ -57,30 +57,37 @@ public class PuzzleGenerator : MonoBehaviour
     private void GenerateGridPuzles()
     {
         PieceRotation.Init(RowsCount, ColumnsCount);
-        _matrixForGenerate = new int[RowsCount, ColumnsCount][];
-        _GeneretedPieces = new GameObject[RowsCount, ColumnsCount];
+        var randomEdgesHorizaontal = new bool[RowsCount, ColumnsCount - 1]; //  переиминовать
+        var randomEdgesVertical = new bool[RowsCount - 1, ColumnsCount];
 
-        InivializeArray();
+        //_GeneretedPieces = new PiecePazzle[RowsCount, ColumnsCount];
 
         for (int y = 0; y < RowsCount; y++)
         {
             for (int x = 0; x < ColumnsCount; x++)
             {
-                CheckSides(new Vector2Int(x, y));
-
-                DebLog(_matrixForGenerate[y, x], "after"); // forCheck;
-
-                var piecePuzzle = _piecesCollections.FindSuitablePazzle(_matrixForGenerate[y, x],
-                    new Vector2Int(x, y));
-
-                if (piecePuzzle != null)
-                    _GeneretedPieces[y, x] = piecePuzzle.gameObject;
-
-                DebLog(_matrixForGenerate[y, x], "before");// forCheck;
+                if (x != ColumnsCount-1)
+                    randomEdgesHorizaontal[y, x] = Random.Range(0, 2) == 0;
+                if (y != RowsCount - 1)
+                    randomEdgesVertical[y, x] = Random.Range(0, 2) == 0;
             }
         }
 
-        InstatiatePuzzles();
+        for (int y = 0; y < RowsCount; y++)
+        {
+            for (int x = 0; x < ColumnsCount; x++)
+            {
+                var pos = new Vector2Int(x, y);
+                //var piecePazzle = new PiecePazzle();
+                var namePos = DefineNamePos(pos);
+                var tips = CheckSides(pos, randomEdgesHorizaontal, randomEdgesVertical);
+
+                var piecePuzzle = _piecesCollections.FindSuitablePazzle(new PieceData(namePos, tips), pos);
+                var test = Instantiate(piecePuzzle);
+                PieceRotation.RotateTips(test, pos);
+                test.transform.position = new Vector3(-3 * x, -3 * y, 0);
+            }
+        }
     }
 
     private void DebLog(int[] arr, string z)// forCheck;
@@ -93,59 +100,41 @@ public class PuzzleGenerator : MonoBehaviour
         Debug.Log(z + test);
     }
 
-    private void InivializeArray()
+    private NamePos DefineNamePos(Vector2Int currPos)
     {
-        for (var i = 0; i < RowsCount; i++)
-            for (var j = 0; j < ColumnsCount; j++)
-                    _matrixForGenerate[i, j] = new int[4];
+
+        if ((currPos.x == 0 || currPos.x == ColumnsCount - 1) &&
+            (currPos.y == 0 || currPos.y == RowsCount - 1))
+            return  NamePos.CORNER;
+
+        if (currPos.x == 0 || currPos.y == 0 ||
+            currPos.x == ColumnsCount - 1 || currPos.y == RowsCount - 1)
+            return NamePos.EDGE;
+
+        else
+            return NamePos.CENTER;
     }
 
-    private void InstatiatePuzzles()
+    private PossibleTips[] CheckSides(Vector2Int curPos, bool [,] randomEdgesHorizontal, bool[,] randomEdgesVertical)
     {
-        for (var i = 0; i < RowsCount; i++)
-        { 
-            for (var j = 0; j < ColumnsCount; j++)
-            {
-                if (_GeneretedPieces[i, j] != null)
-                { 
-                    var currPiece = Instantiate(_GeneretedPieces[i,j].gameObject);
-                    // ????????? PieceRotation.RotatePiece(currPiece, new Vector2Int(j, i));
-                    currPiece.transform.position = new Vector3((j * -3f), (i * -3f), 0); //  очень рядом
-                }
-            }
-        }
-    }
+        var tips= new PossibleTips[4];
 
+        if (curPos.x != 0)
+            tips[0] = randomEdgesHorizontal[curPos.y , curPos.x - 1] ? PossibleTips.CONVEX : PossibleTips.CAVITY;
+        else tips[0] = PossibleTips.STRAIGHT;
 
-    
+        if (curPos.y != 0)
+            tips[1] = randomEdgesVertical[curPos.y - 1, curPos.x] ? PossibleTips.CONVEX : PossibleTips.CAVITY;
+        else tips[1] = PossibleTips.STRAIGHT;
 
-    private void CheckSides(Vector2Int currPos)
-    {
-        var sideStartGenereation_x = -1; // -1 left, 1 right
-        var sideStartGenereation_y = -1; // -1 left, 1 right
-        var checkPrevElemTips_x = (sideStartGenereation_x == 1) ? 0 : 2;
-        var checkPrevElemTips_y = (sideStartGenereation_y == 1) ? 3 : 1; // delete this
+        if (curPos.x != ColumnsCount -1)
+            tips[2] = randomEdgesHorizontal[curPos.y, curPos.x] ? PossibleTips.CAVITY : PossibleTips.CONVEX;
+        else tips[2] = PossibleTips.STRAIGHT;
 
-        for (var i = 0; i < _steps.Count; i++)
-        {
-            /// refactor
-            if (currPos.x + _steps[i].x < 0 || currPos.x + _steps[i].x >= ColumnsCount ||
-                currPos.y + _steps[i].y < 0 || currPos.y + _steps[i].y >= RowsCount)
-                _matrixForGenerate[currPos.y, currPos.x][i] = (int)PossibleTips.STRAIGHT;
+        if (curPos.y != RowsCount - 1)
+            tips[3] = randomEdgesVertical[curPos.y, curPos.x] ? PossibleTips.CAVITY : PossibleTips.CONVEX;
+        else tips[3] = PossibleTips.STRAIGHT;
 
-            else if (_steps[i].x == sideStartGenereation_x)
-                _matrixForGenerate[currPos.y, currPos.x][i] =
-                    (_matrixForGenerate[currPos.y, currPos.x + _steps[i].x] [checkPrevElemTips_x] ==
-                    (int)PossibleTips.CAVITY) ? (int)PossibleTips.CONVEX : (int)PossibleTips.CAVITY;
-
-            else if (_steps[i].y == sideStartGenereation_y)
-                _matrixForGenerate[currPos.y, currPos.x] [i] =
-                    (_matrixForGenerate[currPos.y + _steps[i].y, currPos.x] [checkPrevElemTips_y] ==
-                    (int)PossibleTips.CAVITY) ? (int)PossibleTips.CONVEX : (int)PossibleTips.CAVITY;
-
-            else
-                _matrixForGenerate[currPos.y, currPos.x][i] =
-                    (int)PossibleTips.indefinitely;
-        }
+        return tips;
     }
 }

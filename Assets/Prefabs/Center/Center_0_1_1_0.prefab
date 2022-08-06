@@ -128,5 +128,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59e825493de8747d888425c36f299c73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  namePos: 2
-  tipsPiece: 00000000010000000100000000000000
+  <PieceData>k__BackingField:
+    namePos: 2
+    tipsPiece: 00000000010000000100000000000000
