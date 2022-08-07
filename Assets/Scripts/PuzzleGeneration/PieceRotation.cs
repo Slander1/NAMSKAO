@@ -33,8 +33,8 @@ namespace PuzzleGeneration
 
         private static int SearchCoefficient(Vector2Int pos)
         {
-            int columnsCount = PuzzleGenerator.Instanse.ColumnsCount;
-            int rowsCount = PuzzleGenerator.Instanse.RowsCount;
+            int columnsCount = PuzzleGenerator.Instanse.columnsCount;
+            int rowsCount = PuzzleGenerator.Instanse.rowsCount;
 
             if (pos.x == 0 && pos.y != 0)
                 return 3;

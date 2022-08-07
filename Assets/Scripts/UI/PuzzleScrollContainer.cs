@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class PuszzleScrollContainer : MonoBehaviour
+public class PuzzleScrollContainer : MonoBehaviour
 {
     [SerializeField] private RectTransform container;
     [SerializeField] private RectTransform imagePrefab;

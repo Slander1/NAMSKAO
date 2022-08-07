@@ -17,16 +17,13 @@ namespace PuzzleGeneration
 
         [Header("Tiles Settings")]
         public int seed;
-        public int ColumnsCount = 4;
-        public int RowsCount = 4;
+        public int columnsCount = 4;
+        public int rowsCount = 4;
 
         [Header("Puzzle prefabs Settings")]
         [SerializeField] private PiecePazzle[] puzzlePrefabs;
 
-        
-
         private PiecesCollection _piecesCollections;
-
 
         private void Awake()
         {
@@ -40,26 +37,26 @@ namespace PuzzleGeneration
 
         public PiecePazzle[,] GenerateGridPuzles()
         {
-            var generatedPazzle = new PiecePazzle[RowsCount, ColumnsCount];
-            var randomTipsHorizontal = new bool[RowsCount, ColumnsCount - 1];
-            var randomTipsVertical = new bool[RowsCount - 1, ColumnsCount];
-
+            var generatedPazzle = new PiecePazzle[rowsCount, columnsCount];
+            var randomTipsHorizontal = new bool[rowsCount, columnsCount - 1];
+            var randomTipsVertical = new bool[rowsCount - 1, columnsCount];
+            var scale = CalculateScale();
             Random.InitState(seed);
 
-            for (int y = 0; y < RowsCount; y++)
+            for (int y = 0; y < rowsCount; y++)
             {
-                for (int x = 0; x < ColumnsCount; x++)
+                for (int x = 0; x < columnsCount; x++)
                 {
-                    if (x != ColumnsCount - 1)
+                    if (x != columnsCount - 1)
                         randomTipsHorizontal[y, x] = Random.Range(0, 2) == 0;
-                    if (y != RowsCount - 1)
+                    if (y != rowsCount - 1)
                         randomTipsVertical[y, x] = Random.Range(0, 2) == 0;
                 }
             }
 
-            for (int y = 0; y < RowsCount; y++)
+            for (int y = 0; y < rowsCount; y++)
             {
-                for (int x = 0; x < ColumnsCount; x++)
+                for (int x = 0; x < columnsCount; x++)
                 {
                     var pos = new Vector2Int(x, y);
                     var namePos = DefineNamePos(pos);
@@ -68,7 +65,9 @@ namespace PuzzleGeneration
                     var piecePuzzle = _piecesCollections.FindSuitablePazzle(new PieceData(namePos, tips), pos);
                     var piecePazzle = Instantiate(piecePuzzle, transform);
                     PieceRotation.RotateTips(piecePazzle, pos);
-                    piecePazzle.transform.position = new Vector3(3 * x, -3 * y, 0);
+                    piecePazzle.transform.position = new Vector3(3 * x * scale.x +2, -3 * y * scale.y +3, 0);
+                    piecePazzle.scaleOnBoard = scale;
+                    piecePazzle.transform.localScale = scale;
                     generatedPazzle[y, x] = piecePazzle;
                 }
             }
@@ -78,12 +77,12 @@ namespace PuzzleGeneration
         private NamePos DefineNamePos(Vector2Int currPos)
         {
 
-            if ((currPos.x == 0 || currPos.x == ColumnsCount - 1) &&
-                (currPos.y == 0 || currPos.y == RowsCount - 1))
+            if ((currPos.x == 0 || currPos.x == columnsCount - 1) &&
+                (currPos.y == 0 || currPos.y == rowsCount - 1))
                 return NamePos.CORNER;
 
             if (currPos.x == 0 || currPos.y == 0 ||
-                currPos.x == ColumnsCount - 1 || currPos.y == RowsCount - 1)
+                currPos.x == columnsCount - 1 || currPos.y == rowsCount - 1)
                 return NamePos.EDGE;
 
             else
@@ -102,20 +101,20 @@ namespace PuzzleGeneration
                 tips[1] = randomEdgesVertical[curPos.y - 1, curPos.x] ? TipsVariant.CONVEX : TipsVariant.CAVITY;
             else tips[1] = TipsVariant.STRAIGHT;
 
-            if (curPos.x != ColumnsCount - 1)
+            if (curPos.x != columnsCount - 1)
                 tips[2] = randomEdgesHorizontal[curPos.y, curPos.x] ? TipsVariant.CAVITY : TipsVariant.CONVEX;
             else tips[2] = TipsVariant.STRAIGHT;
 
-            if (curPos.y != RowsCount - 1)
+            if (curPos.y != rowsCount - 1)
                 tips[3] = randomEdgesVertical[curPos.y, curPos.x] ? TipsVariant.CAVITY : TipsVariant.CONVEX;
             else tips[3] = TipsVariant.STRAIGHT;
 
             return tips;
         }
 
-        public void ScalePazzlesTosqreen()
+        public Vector3 CalculateScale()
         {
-            transform.localScale = new Vector3(5.4f / (float)RowsCount, 5.4f / (float)ColumnsCount, 1f);
+            return new Vector3(5.4f / (float)rowsCount, 5.4f / (float)columnsCount, 1f);
         }
     }
 }

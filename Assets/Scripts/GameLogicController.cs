@@ -2,6 +2,7 @@ using UnityEngine;
 using PuzzleGeneration;
 using System;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class GameLogicController : MonoBehaviour
 {
@@ -16,7 +17,8 @@ public class GameLogicController : MonoBehaviour
     [SerializeField] private PuzzleGenerator _puzzleGenerator;
 
     [Header("UI")]
-    [SerializeField] private PuszzleScrollContainer _puszzleScrollContainer;
+    [SerializeField] private PuzzleScrollContainer _puszzleScrollContainer;
+    [SerializeField] private PuzzleGridGenerator _puzzleGridGenerator;
 
 
 
@@ -28,22 +30,28 @@ public class GameLogicController : MonoBehaviour
 
     private void StartGame()
     {
+        var rows = _puzzleGenerator.rowsCount;
+        var columns = _puzzleGenerator.columnsCount;
+        var scaleOnBoard = _puzzleGenerator.CalculateScale();
         generatedPazzle = _puzzleGenerator.GenerateGridPuzles();
         UV.UVGenerator.GetVertexFromPazzle(generatedPazzle, texture2D);
-        _puzzleGenerator.ScalePazzlesTosqreen();
+        _puzzleGridGenerator.GenerateImagesForGridPuzzles(generatedPazzle,
+           scaleOnBoard);
+       // var scale = _puzzleGenerator.ScalePazzlesTosqreen();
 
-        int count = _puzzleGenerator.RowsCount * _puzzleGenerator.ColumnsCount;
+        int count = rows * columns;
         var i = 0;
-        foreach(var UIImageForScroll in _puszzleScrollContainer.GenerateImagesToScroll(count))
+        foreach (var UIImageForScroll in _puszzleScrollContainer.GenerateImagesToScroll(count))
         {
-            var y = i / _puzzleGenerator.ColumnsCount;
-            var x = i % _puzzleGenerator.ColumnsCount;
+            var y = i / columns;
+            var x = i % columns;
             generatedPazzle[y, x].elementForScroll = UIImageForScroll;
+            UIImageForScroll.transform.position = Vector3.zero;
+            generatedPazzle[y, x].transform.localScale = generatedPazzle[y, x].scaleInContainer =
+                new Vector3(0.8f, 0.8f, 1f);
+            generatedPazzle[y, x].scaleOnBoard = scaleOnBoard;
             i++;
         }
-
-
-
     }
 
     

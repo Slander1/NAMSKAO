@@ -46,9 +46,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59e825493de8747d888425c36f299c73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  elementForScroll: {fileID: 0}
   <PieceData>k__BackingField:
     namePos: 0
     tipsPiece: 02000000020000000100000001000000
+  multiplyInDrag: 3
+  scaleInContainer: {x: 2.4, y: 2.4, z: 0}
+  scaleOnBoard: {x: 0, y: 0, z: 0}
 --- !u!65 &222940160901486210
 BoxCollider:
   m_ObjectHideFlags: 0
