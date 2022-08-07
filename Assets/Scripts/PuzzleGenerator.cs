@@ -79,9 +79,9 @@ public class PuzzleGenerator : MonoBehaviour
                 var tips = CheckSides(pos, randomEdgesHorizaontal, randomEdgesVertical);
 
                 var piecePuzzle = _piecesCollections.FindSuitablePazzle(new PieceData(namePos, tips), pos);
-                var piecePazzle = Instantiate(piecePuzzle);
+                var piecePazzle = Instantiate(piecePuzzle, transform);
                 PieceRotation.RotateTips(piecePazzle, pos);
-                piecePazzle.transform.position = new Vector3(-3 * x, -3 * y, 0);
+                piecePazzle.transform.position = new Vector3(3* x, -3 * y, 0);
                 generatedPazzle[y, x] = piecePazzle;
             }
         }

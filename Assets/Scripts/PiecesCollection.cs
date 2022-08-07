@@ -18,7 +18,7 @@ public class PiecesCollection
 
         int IEqualityComparer<TipsVariant[]>.GetHashCode(TipsVariant[] objects)
         {
-			return 1;
+			return 1; // избавиться 
 			int hash = objects.GetHashCode();
 			foreach(var obj in objects)
             {
