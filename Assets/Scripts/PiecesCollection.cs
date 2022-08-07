@@ -4,11 +4,9 @@ using UnityEngine;
 using System.Linq;
 using Random = UnityEngine.Random;
 
-
-//  возможно стоит сделать статическим
 public class PiecesCollection
 {
-    class A : IEqualityComparer<TipsVariant[]>
+    class A : IEqualityComparer<TipsVariant[]> // подумать как назвать
     {
         bool IEqualityComparer<TipsVariant[]>.Equals(TipsVariant[] x, TipsVariant[] y)
         {
@@ -48,45 +46,12 @@ public class PiecesCollection
 				}
             }				
 		}
-		// не работает InitState;
-		Random.InitState(PuzzleGenerator.Instanse.seed);
 	}
 
 
 	public PiecePazzle FindSuitablePazzle(PieceData pieceData, Vector2Int pos)
 	{
 		return _pices[pieceData.namePos][pieceData.tipsPiece];
-		//PieceRotation.ShiftTips(pos, tips); //Проверять на центр
-
-		//var randomizeTips = RandomizeTips(tips);
-
-		List<PiecePazzle> collection = null;
-		// переработать на систему по позициям
-		//switch (randomizeTips.Count)
-		//{
-		//	case 2:
-		//		collection = _cornerCollection;
-		//		break;
-
-		//	case 3:
-		//		collection = _edgeCollection;
-		//		break;
-
-		//	case 4:
-		//		collection = _centerCollection;
-		//		break;
-
-		//	default:
-		//		break;
-		//}
-		
-		foreach (var piece in collection)
-		{
-			//if (Enumerable.SequenceEqual(randomizeTips, piece.tipsPiece))
-				return piece;
-		}
-
-		return null;
 	}
 
 	private List<TipsVariant> RandomizeTips(TipsVariant[] tips)

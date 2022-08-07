@@ -1,9 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-// подумать над правильностью
 public enum TipsVariant
 {
     CAVITY = 0,
@@ -11,10 +7,6 @@ public enum TipsVariant
     STRAIGHT = 2,
     UNCERTAIN = 3
 }
-
-
-// проверить названия
-// columns
 
 public class PuzzleGenerator : MonoBehaviour
 {
@@ -56,16 +48,15 @@ public class PuzzleGenerator : MonoBehaviour
         var randomEdgesHorizaontal = new bool[RowsCount, ColumnsCount - 1]; //  переиминовать
         var randomEdgesVertical = new bool[RowsCount - 1, ColumnsCount];
 
-        //_GeneretedPieces = new PiecePazzle[RowsCount, ColumnsCount];
-
+        Random.InitState(seed);
         for (int y = 0; y < RowsCount; y++)
         {
             for (int x = 0; x < ColumnsCount; x++)
             {
                 if (x != ColumnsCount-1)
-                    randomEdgesHorizaontal[y, x] = UnityEngine.Random.Range(0, 2) == 0;
+                    randomEdgesHorizaontal[y, x] = Random.Range(0, 2) == 0;
                 if (y != RowsCount - 1)
-                    randomEdgesVertical[y, x] = UnityEngine.Random.Range(0, 2) == 0;
+                    randomEdgesVertical[y, x] = Random.Range(0, 2) == 0;
             }
         }
 
@@ -74,7 +65,6 @@ public class PuzzleGenerator : MonoBehaviour
             for (int x = 0; x < ColumnsCount; x++)
             {
                 var pos = new Vector2Int(x, y);
-                //var piecePazzle = new PiecePazzle();
                 var namePos = DefineNamePos(pos);
                 var tips = CheckSides(pos, randomEdgesHorizaontal, randomEdgesVertical);
 
@@ -86,6 +76,7 @@ public class PuzzleGenerator : MonoBehaviour
             }
         }
         UVGenerator.GetVertexFromPazzle(generatedPazzle, texture2D);
+        CameraController.Instance.CameraLookAt(transform);
     }
 
     private NamePos DefineNamePos(Vector2Int currPos)

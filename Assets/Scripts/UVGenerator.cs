@@ -9,6 +9,7 @@ public static class UVGenerator
     public static void GetVertexFromPazzle(PiecePazzle[,] generatedPuzzle, Texture2D picture)
     {
         var meshes = new List<MeshFilter>();
+
         foreach (var piece in generatedPuzzle)
         {
             var meshFilter = piece.GetComponentInChildren<MeshFilter>();
@@ -17,6 +18,7 @@ public static class UVGenerator
 
         var verticles = meshes.SelectMany((keyVal) => keyVal.mesh.vertices
                               .Select(vert=> keyVal.transform.TransformPoint(vert)));
+
         var minx = verticles.Min(vertex => vertex.x);
         var maxx = verticles.Max(vertex => vertex.x);
 
@@ -28,6 +30,7 @@ public static class UVGenerator
         foreach (var meshFilrer in meshes)
         {
             var uv = new Vector2[meshFilrer.mesh.vertices.Length];
+
             for(int i = 0; i < meshFilrer.mesh.vertices.Length; i++)
             {
                 var vertex = meshFilrer.mesh.vertices[i];
@@ -35,6 +38,7 @@ public static class UVGenerator
                 uv[i] = new Vector2(Mathf.InverseLerp(minx, maxx, globalPosition.x),
                     Mathf.InverseLerp(miny, maxy, globalPosition.y));
             }
+
             meshFilrer.mesh.uv = uv;
         }
         SetPictureToPuzzle(generatedPuzzle, picture);
@@ -49,7 +53,5 @@ public static class UVGenerator
             meshRenderer.material.mainTexture = picture ;
         }
     }
-
-
 }
 

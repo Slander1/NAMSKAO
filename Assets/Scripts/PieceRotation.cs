@@ -19,11 +19,13 @@ public static class PieceRotation
             return array; 
 
         var cloneArray = (T[])array.Clone();
+
         for (int i = 0; i < cloneArray.Length; i++)
         {
             var nextId = (i + shiftCount) % cloneArray.Length;
             array[i] = cloneArray[nextId];
         }
+
         return array;
     }
 
