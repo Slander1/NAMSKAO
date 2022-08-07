@@ -20,14 +20,14 @@ namespace UV
 
             var verticles = meshes.SelectMany((keyVal) => keyVal.mesh.vertices
                                   .Select(vert => keyVal.transform.TransformPoint(vert)));
-
+            ;
             var minx = verticles.Min(vertex => vertex.x);
             var maxx = verticles.Max(vertex => vertex.x);
 
             var miny = verticles.Min(vertex => vertex.y);
             var maxy = verticles.Max(vertex => vertex.y);
 
-            Vector2 size = new Vector2(Mathf.Abs(maxx - minx), Mathf.Abs(maxy - miny));
+            var size = new Vector2(Mathf.Abs(maxx - minx), Mathf.Abs(maxy - miny));
 
             foreach (var meshFilrer in meshes)
             {

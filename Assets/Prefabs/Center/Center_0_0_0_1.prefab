@@ -93,6 +93,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4166612665736100474}
   - component: {fileID: -603563617470398355}
+  - component: {fileID: -2247507714862649999}
   m_Layer: 0
   m_Name: Center_0_0_0_1
   m_TagString: Untagged
@@ -131,3 +132,16 @@ MonoBehaviour:
   <PieceData>k__BackingField:
     namePos: 2
     tipsPiece: 00000000000000000000000001000000
+--- !u!65 &-2247507714862649999
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2684954975116447699}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.6, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}

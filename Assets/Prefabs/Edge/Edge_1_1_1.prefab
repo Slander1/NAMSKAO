@@ -93,6 +93,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2474937817466303272}
   - component: {fileID: -5056963624021510061}
+  - component: {fileID: -3349690162490362786}
   m_Layer: 0
   m_Name: Edge_1_1_1
   m_TagString: Untagged
@@ -131,3 +132,16 @@ MonoBehaviour:
   <PieceData>k__BackingField:
     namePos: 1
     tipsPiece: 01000000020000000100000001000000
+--- !u!65 &-3349690162490362786
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8793735632285001746}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.6, y: 2.6, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}

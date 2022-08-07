@@ -112,5 +112,10 @@ namespace PuzzleGeneration
 
             return tips;
         }
+
+        public void ScalePazzlesTosqreen()
+        {
+            transform.localScale = new Vector3(5.4f / (float)RowsCount, 5.4f / (float)ColumnsCount, 1f);
+        }
     }
 }
