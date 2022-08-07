@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace PuzzleGeneration
 {
     public static class PieceRotation
     {
 
-        public static void RotateTips(PiecePazzle piece, Vector2Int pos)
+        public static void RotateTips(PiecePazzle piece, Vector2Int pos,
+            int rowsCount, int columnsCount)
         {
-            var coefficientShift = SearchCoefficient(pos);
+            var coefficientShift = SearchCoefficient(pos, rowsCount, columnsCount);
             piece.PieceData.tipsPiece = ShiftArray(piece.PieceData.tipsPiece, coefficientShift);
             piece.transform.Rotate(0, 0, coefficientShift * 90);
         }
@@ -31,11 +30,8 @@ namespace PuzzleGeneration
         }
 
 
-        private static int SearchCoefficient(Vector2Int pos)
+        private static int SearchCoefficient(Vector2Int pos, int rowsCount, int columnsCount)
         {
-            int columnsCount = PuzzleGenerator.Instanse.columnsCount;
-            int rowsCount = PuzzleGenerator.Instanse.rowsCount;
-
             if (pos.x == 0 && pos.y != 0)
                 return 3;
 

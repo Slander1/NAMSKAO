@@ -12,9 +12,6 @@ namespace PuzzleGeneration
 
     public class PuzzleGenerator : MonoBehaviour
     {
-        public static PuzzleGenerator Instanse { get; private set; } // избавиться от Instance
-
-
         [Header("Tiles Settings")]
         public int seed;
         public int columnsCount = 4;
@@ -27,11 +24,6 @@ namespace PuzzleGeneration
 
         private void Awake()
         {
-            if (Instanse != null && Instanse != this)
-                Destroy(this);
-            else
-                Instanse = this;
-
             _piecesCollections = new PiecesCollection(puzzlePrefabs);
         }
 
@@ -64,8 +56,10 @@ namespace PuzzleGeneration
 
                     var piecePuzzle = _piecesCollections.FindSuitablePazzle(new PieceData(namePos, tips), pos);
                     var piecePazzle = Instantiate(piecePuzzle, transform);
-                    PieceRotation.RotateTips(piecePazzle, pos);
-                    piecePazzle.transform.position = new Vector3(3 * x * scale.x +2, -3 * y * scale.y +3, 0);
+                    PieceRotation.RotateTips(piecePazzle, pos, rowsCount, columnsCount);
+                    piecePazzle.transform.position  = piecePazzle.startPos =
+                        new Vector3(3 * x * scale.x +2, -3 * y * scale.y +3, 0);
+                    piecePazzle.posInGreed = new Vector2Int(x, y);
                     piecePazzle.scaleOnBoard = scale;
                     piecePazzle.transform.localScale = scale;
                     generatedPazzle[y, x] = piecePazzle;

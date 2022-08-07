@@ -3,6 +3,7 @@ using PuzzleGeneration;
 using System;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class GameLogicController : MonoBehaviour
 {
@@ -19,8 +20,11 @@ public class GameLogicController : MonoBehaviour
     [Header("UI")]
     [SerializeField] private PuzzleScrollContainer _puszzleScrollContainer;
     [SerializeField] private PuzzleGridGenerator _puzzleGridGenerator;
+    [SerializeField] private Image Winscreen;
 
-
+    private List<PiecePazzle> _puzzleOnInitPos = new List<PiecePazzle>();
+    private int _rowsCount;
+    private int _columnsCount;
 
 
     void Start()
@@ -28,23 +32,32 @@ public class GameLogicController : MonoBehaviour
         StartGame();
     }
 
+    private void OnEnable()
+    {
+        PiecePazzle.PiecePazzleOnInitialPos += CheckStatePuzzle;
+    }
+
+    private void OnDisable()
+    {
+        PiecePazzle.PiecePazzleOnInitialPos += CheckStatePuzzle;
+    }
+
     private void StartGame()
     {
-        var rows = _puzzleGenerator.rowsCount;
-        var columns = _puzzleGenerator.columnsCount;
+        _rowsCount = _puzzleGenerator.rowsCount;
+        _columnsCount = _puzzleGenerator.columnsCount;
         var scaleOnBoard = _puzzleGenerator.CalculateScale();
         generatedPazzle = _puzzleGenerator.GenerateGridPuzles();
         UV.UVGenerator.GetVertexFromPazzle(generatedPazzle, texture2D);
         _puzzleGridGenerator.GenerateImagesForGridPuzzles(generatedPazzle,
            scaleOnBoard);
-       // var scale = _puzzleGenerator.ScalePazzlesTosqreen();
 
-        int count = rows * columns;
+        int count = _rowsCount * _columnsCount;
         var i = 0;
         foreach (var UIImageForScroll in _puszzleScrollContainer.GenerateImagesToScroll(count))
         {
-            var y = i / columns;
-            var x = i % columns;
+            var y = i / _columnsCount;
+            var x = i % _columnsCount;
             generatedPazzle[y, x].elementForScroll = UIImageForScroll;
             UIImageForScroll.transform.position = Vector3.zero;
             generatedPazzle[y, x].transform.localScale = generatedPazzle[y, x].scaleInContainer =
@@ -54,22 +67,13 @@ public class GameLogicController : MonoBehaviour
         }
     }
 
-    
+    private void CheckStatePuzzle(PiecePazzle piecePazzle)
+    {
+        if (_puzzleOnInitPos.Contains(piecePazzle))
+            return;
 
-
-
-    //private void Update()
-    //{ 
-    //    if (Input.GetMouseButtonDown(0) && selectedObject != null)
-    //    {
-    //        var ray = _currentCamera.ScreenPointToRay(Input.mousePosition);
-    //        if (Physics.Raycast(ray, out var info, 100, LayerMask.GetMask(Tiles.TILE, Tiles.HOVER, Tiles.HIGLIGHT)))
-    //    }
-    //}
-
-    //private RaycastHit CastRay()
-    //{
-    //    var screenMousePosFar = new Vector3(Input.mousePosition.x,
-    //        Input.);
-    //}
+        _puzzleOnInitPos.Add(piecePazzle);
+        if (_puzzleOnInitPos.Count == _rowsCount * _columnsCount)
+            Winscreen.gameObject.SetActive(true);
+    }
 }

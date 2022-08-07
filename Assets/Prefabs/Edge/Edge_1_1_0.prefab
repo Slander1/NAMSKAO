@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6399645467907694466}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.16, y: -0.01, z: 0}
   m_LocalScale: {x: 1914.607, y: 1343.7926, z: 661.2254}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -109,7 +109,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7673740152772307877}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.3200331, y: -29.1033, z: 235.41795}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -130,12 +130,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   elementForScroll: {fileID: 0}
+  startPos: {x: 0, y: 0, z: 0}
+  posInGreed: 0
   <PieceData>k__BackingField:
     namePos: 1
     tipsPiece: 01000000020000000000000001000000
-  multiplyInDrag: 3
-  scaleInContainer: {x: 2.4, y: 2.4, z: 0}
   scaleOnBoard: {x: 0, y: 0, z: 0}
+  scaleInContainer: {x: 2.4, y: 2.4, z: 0}
 --- !u!65 &1118855770143444421
 BoxCollider:
   m_ObjectHideFlags: 0

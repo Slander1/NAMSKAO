@@ -15,7 +15,6 @@ public class PuzzleGridGenerator : MonoBehaviour
             var cell = Instantiate(cellGridPrefab, greed);
             cell.transform.position = puzzle.transform.position;
             cell.localScale = scaleOnBoard;
-            puzzle.startPos = puzzle.transform.position;
         }
     }
 }
