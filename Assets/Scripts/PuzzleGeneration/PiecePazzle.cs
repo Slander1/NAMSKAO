@@ -32,8 +32,8 @@ namespace PuzzleGeneration
 		private Vector3 _offset;
 		private bool _inContainer = true;
 
-		private List<PiecePazzle> _thisOnInitialPosNearPuzzles;
-		private List<PiecePazzle> _thisNotOnInitialPosNearPuzzles = new List<PiecePazzle>();
+		private List<PiecePazzle> _nearPieces = new List<PiecePazzle>();
+		private List<PiecePazzle> _allPuzzles = new List<PiecePazzle>();
 
 
 		private void OnEnable()
@@ -62,10 +62,11 @@ namespace PuzzleGeneration
 			if (onInitialPos)
 			{
 				var scale = transform.localScale;
-				foreach (var piece in _thisOnInitialPosNearPuzzles)
+				foreach (var piece in _nearPieces)
 				{
 					piece.transform.position = cursorPosition +
-						new Vector3(3 * piece.posInGreed.x * scale.x + 2, -3 * piece.posInGreed.y * scale.y + 3, 0);
+						new Vector3(3 * piece.posInGreed.x * scale.x, -3 *
+						piece.posInGreed.y * scale.y, 0f);
 				}
 			}
 		}
@@ -74,7 +75,7 @@ namespace PuzzleGeneration
 		{
 			if (onInitialPos)
 			{
-				foreach (var piece in _thisOnInitialPosNearPuzzles)
+				foreach (var piece in _nearPieces)
 				{
 					piece.transform.position = piece.startPos;
 				}
@@ -101,6 +102,34 @@ namespace PuzzleGeneration
 		}
 
 
+		private bool CheckPosInGreed(Vector2Int startPos, Vector2Int checkPos)
+		{
+			if (Math.Abs(startPos.x - checkPos.x) == 1 && startPos.y == checkPos.y)
+				return true;
+			if (Math.Abs(startPos.y - checkPos.y) == 1 && startPos.x == checkPos.x)
+				return true;
+			
+			return false;
+		}
+
+		public void GetListAtNearPieces(List<PiecePazzle> otherList, PiecePazzle newInNear)
+        {
+            foreach (var piece in _nearPieces)
+            {
+				piece.AddNewPieceInChain(newInNear);
+				if (!otherList.Contains(piece))
+				{
+					otherList.Add(piece);
+				}
+			}
+        }
+
+		public void AddNewPieceInChain(PiecePazzle newInNear)
+        {
+			if (!_nearPieces.Contains(newInNear))
+				_nearPieces.Add(newInNear);
+        }
+
 		private void ComparePos()
         {
 			if (Mathf.Abs(transform.position.x - startPos.x) < 2
@@ -108,20 +137,47 @@ namespace PuzzleGeneration
 			{
 				transform.position = startPos;
 				onInitialPos = true;
-				_thisOnInitialPosNearPuzzles = _thisNotOnInitialPosNearPuzzles;
 				PiecePazzleOnInitialPos?.Invoke(this);
+				var i = 0;
+				while(i < _nearPieces.Count)
+				{
+					_nearPieces[i].GetListAtNearPieces(_nearPieces, this);
+					i++;
+				}
+				GiveNewInfoToNear();
 				Destroy(elementForScroll.gameObject);
 			}
 
 		}
 
+		private void GiveNewInfoToNear()
+        {
+			var i = 0;
+			while (i < _nearPieces.Count)
+			{
+				if (CheckPosInGreed(posInGreed, _nearPieces[i].posInGreed))
+					_nearPieces[i].GiveListToNear(_nearPieces);
+				i++;
+			}
+		}
+
+		public void GiveListToNear(List<PiecePazzle> otherList)
+        {
+            foreach (var piece in otherList)
+            {
+				AddNewPieceInChain(piece);
+			}
+        }
+
 		private void NearPiecePazzle(PiecePazzle otherPiecPazzle)
         {
-			if (onInitialPos)
-				_thisOnInitialPosNearPuzzles.Add(otherPiecPazzle);
+			if (CheckPosInGreed(posInGreed, otherPiecPazzle.posInGreed) &&
+				otherPiecPazzle!=this && (!_nearPieces.Contains(otherPiecPazzle)))
+			{ 
+				_nearPieces.Add(otherPiecPazzle);
+			}
 			else
-				_thisNotOnInitialPosNearPuzzles.Add(otherPiecPazzle);
-
+				_allPuzzles.Add(otherPiecPazzle);
         }
     }
 

@@ -47,12 +47,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   elementForScroll: {fileID: 0}
+  startPos: {x: 0, y: 0, z: 0}
+  posInGreed: {x: 0, y: 0}
+  onInitialPos: 0
   <PieceData>k__BackingField:
     namePos: 2
     tipsPiece: 00000000000000000100000000000000
-  multiplyInDrag: 3
-  scaleInContainer: {x: 2.4, y: 2.4, z: 0}
   scaleOnBoard: {x: 0, y: 0, z: 0}
+  scaleInContainer: {x: 2.4, y: 2.4, z: 0}
 --- !u!65 &-2148058586537639885
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -64,7 +66,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2.6, y: 1, z: 1}
+  m_Size: {x: 2.6, y: 2.6, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6607205506682739625
 GameObject:
