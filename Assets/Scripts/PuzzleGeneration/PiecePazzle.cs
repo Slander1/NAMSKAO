@@ -13,14 +13,15 @@ namespace PuzzleGeneration
 
 	public class PiecePazzle : MonoBehaviour
 	{
+		[Header("Container")]
 		public RectTransform elementForScroll;
 
+		[Header("Starts location piece")]
 		public Vector3 startPos;
 		public Vector2Int posInGreed;
 
+		[Header("")]
 		public bool onInitialPos = false;
-
-
 		public List<PiecePazzle> nearPieces = new List<PiecePazzle>();
 
 		[field: SerializeField] public PieceData PieceData { get; set; }
@@ -41,9 +42,6 @@ namespace PuzzleGeneration
 		{
 			PiecePazzleOnInitialPos += NearPiecePazzle;
 		}
-
-
-        
 
 		private bool CheckPosInGreed(Vector2Int startPos, Vector2Int checkPos)
 		{
@@ -94,10 +92,9 @@ namespace PuzzleGeneration
 
 		private void GiveNewInfoToNear()
         {
-			var i = 0;
             foreach (var piece in nearPieces)
             {
-				nearPieces[i].GiveListToNear(nearPieces);
+				piece.GiveListToNear(nearPieces);
             }
 					
 		}

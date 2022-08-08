@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using Random = UnityEngine.Random;
 
 namespace PuzzleGeneration
 {
-	public class PiecesCollection
+    public class PiecesCollection
 	{
-		class A : IEqualityComparer<TipsVariant[]> // подумать как назвать
+		class DictionaryComparer : IEqualityComparer<TipsVariant[]>
 		{
 			bool IEqualityComparer<TipsVariant[]>.Equals(TipsVariant[] x, TipsVariant[] y)
 			{
@@ -18,33 +16,39 @@ namespace PuzzleGeneration
 
 			int IEqualityComparer<TipsVariant[]>.GetHashCode(TipsVariant[] objects)
 			{
-				return 1; // избавиться 
-				int hash = objects.GetHashCode();
-				foreach (var obj in objects)
+				if (objects != null)
 				{
-					hash ^= obj.GetHashCode();
+						int hash = 17;
+
+						foreach (var item in objects)
+						{
+							hash = hash * 23 + item.GetHashCode();
+						}
+
+						return hash;
 				}
-				return hash;
+
+				return 0;
 			}
 		}
-		private Dictionary<NamePos, Dictionary<TipsVariant[], PiecePazzle>> _pices { get; }
+		private Dictionary<NamePos, Dictionary<TipsVariant[], PiecePazzle>> pices { get; }
 
 		public PiecesCollection(PiecePazzle[] pieces)
 		{
-			_pices = new Dictionary<NamePos, Dictionary<TipsVariant[], PiecePazzle>> {
-			{ NamePos.CENTER, new Dictionary<TipsVariant[],PiecePazzle>(new A()) },
-			{ NamePos.CORNER, new Dictionary<TipsVariant[],PiecePazzle>(new A()) },
-			{ NamePos.EDGE,   new Dictionary<TipsVariant[],PiecePazzle>(new A()) } };
+			pices = new Dictionary<NamePos, Dictionary<TipsVariant[], PiecePazzle>> {
+			{ NamePos.CENTER, new Dictionary<TipsVariant[],PiecePazzle>(new DictionaryComparer()) },
+			{ NamePos.CORNER, new Dictionary<TipsVariant[],PiecePazzle>(new DictionaryComparer()) },
+			{ NamePos.EDGE,   new Dictionary<TipsVariant[],PiecePazzle>(new DictionaryComparer()) } };
 			foreach (var piece in pieces)
 			{
 				if (piece.PieceData.namePos == NamePos.CENTER)
-					_pices[piece.PieceData.namePos].Add(piece.PieceData.tipsPiece, piece);
+					pices[piece.PieceData.namePos].Add(piece.PieceData.tipsPiece, piece);
 				else
 				{
 					for (int i = 0; i < 4; i++)
 					{
 						var tips = PieceRotation.ShiftArray(piece.PieceData.tipsPiece.ToArray(), i);
-						_pices[piece.PieceData.namePos].Add(tips, piece);
+						pices[piece.PieceData.namePos].Add(tips, piece);
 					}
 				}
 			}
@@ -53,24 +57,8 @@ namespace PuzzleGeneration
 
 		public PiecePazzle FindSuitablePazzle(PieceData pieceData, Vector2Int pos)
 		{
-			return _pices[pieceData.namePos][pieceData.tipsPiece];
+			return pices[pieceData.namePos][pieceData.tipsPiece];
 		}
-
-		private List<TipsVariant> RandomizeTips(TipsVariant[] tips)
-		{
-			var RandomTips = new List<TipsVariant>();
-
-			for (int i = 0; i < tips.Length; i++)
-			{
-				if (tips[i] == TipsVariant.UNCERTAIN)
-					tips[i] = (TipsVariant)Random.Range(0, 2);
-
-				if (tips[i] != TipsVariant.STRAIGHT)
-					RandomTips.Add(tips[i]);
-			}
-
-			return RandomTips;
-		}
-	}
+    }
 }
 

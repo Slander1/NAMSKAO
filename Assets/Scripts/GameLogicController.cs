@@ -66,7 +66,7 @@ public class GameLogicController : MonoBehaviour
                 listGeneratedPuzzles.Add(generatedPazzle[y, x]);
             }
         }
-        //var i = 0;
+
         foreach (var UIImageForScroll in _puszzleScrollContainer.GenerateImagesToScroll(count))
         {
             var i = Random.Range(0, listGeneratedPuzzles.Count);
@@ -79,17 +79,6 @@ public class GameLogicController : MonoBehaviour
             listGeneratedPuzzles[i].scaleOnBoard = scaleOnBoard;
 
             listGeneratedPuzzles.RemoveAt(i);
-            //var y = i / _columnsCount;
-            //var x = i % _columnsCount;
-
-            //generatedPazzle[y, x].elementForScroll = UIImageForScroll;
-
-            //UIImageForScroll.transform.position = Vector3.zero;
-
-            //generatedPazzle[y, x].transform.localScale = generatedPazzle[y, x].scaleInContainer =
-            //    new Vector3(0.8f, 0.8f, 1f);
-            //generatedPazzle[y, x].scaleOnBoard = scaleOnBoard;
-            //i++;
         }
     }
 

@@ -48,7 +48,6 @@ namespace UV
 
         public static void SetPictureToPuzzle(PuzzleGeneration.PiecePazzle[,] generatedPuzzle, Texture2D picture)
         {
-            var meshRenderers = new List<MeshRenderer>();
             foreach (var piece in generatedPuzzle)
             {
                 var meshRenderer = piece.GetComponentInChildren<MeshRenderer>();
