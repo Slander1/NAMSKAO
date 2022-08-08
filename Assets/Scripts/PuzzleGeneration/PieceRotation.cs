@@ -5,7 +5,7 @@ namespace PuzzleGeneration
     public static class PieceRotation
     {
 
-        public static void RotateTips(PiecePazzle piece, Vector2Int pos,
+        public static void RotateTips(PiecePuzzle piece, Vector2Int pos,
             int rowsCount, int columnsCount)
         {
             var coefficientShift = SearchCoefficient(pos, rowsCount, columnsCount);

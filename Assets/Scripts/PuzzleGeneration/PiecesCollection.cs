@@ -31,14 +31,14 @@ namespace PuzzleGeneration
 				return 0;
 			}
 		}
-		private Dictionary<NamePos, Dictionary<TipsVariant[], PiecePazzle>> pices { get; }
+		private Dictionary<NamePos, Dictionary<TipsVariant[], PiecePuzzle>> pices { get; }
 
-		public PiecesCollection(PiecePazzle[] pieces)
+		public PiecesCollection(PiecePuzzle[] pieces)
 		{
-			pices = new Dictionary<NamePos, Dictionary<TipsVariant[], PiecePazzle>> {
-			{ NamePos.CENTER, new Dictionary<TipsVariant[],PiecePazzle>(new DictionaryComparer()) },
-			{ NamePos.CORNER, new Dictionary<TipsVariant[],PiecePazzle>(new DictionaryComparer()) },
-			{ NamePos.EDGE,   new Dictionary<TipsVariant[],PiecePazzle>(new DictionaryComparer()) } };
+			pices = new Dictionary<NamePos, Dictionary<TipsVariant[], PiecePuzzle>> {
+			{ NamePos.CENTER, new Dictionary<TipsVariant[],PiecePuzzle>(new DictionaryComparer()) },
+			{ NamePos.CORNER, new Dictionary<TipsVariant[],PiecePuzzle>(new DictionaryComparer()) },
+			{ NamePos.EDGE,   new Dictionary<TipsVariant[],PiecePuzzle>(new DictionaryComparer()) } };
 			foreach (var piece in pieces)
 			{
 				if (piece.PieceData.namePos == NamePos.CENTER)
@@ -55,8 +55,9 @@ namespace PuzzleGeneration
 		}
 
 
-		public PiecePazzle FindSuitablePazzle(PieceData pieceData, Vector2Int pos)
+		public PiecePuzzle FindSuitablePazzle(PieceData pieceData)
 		{
+			Debug.Log(pieceData.namePos + " " + string.Join(" ",pieceData.tipsPiece));
 			return pices[pieceData.namePos][pieceData.tipsPiece];
 		}
     }

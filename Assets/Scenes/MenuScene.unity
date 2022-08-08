@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccdb2660666af490abf5ae36ed17181f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: 100
+  seed: 11
   columnsCount: 3
   rowsCount: 3
   puzzlePrefabs:
@@ -414,10 +414,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   texture2D: {fileID: 2800000, guid: 31c2f2b5a1a0246959ff8f7c873fc4f2, type: 3}
-  _puzzleGenerator: {fileID: 219750821}
-  _puszzleScrollContainer: {fileID: 2124971080}
-  _puzzleGridGenerator: {fileID: 2000489239}
-  Winscreen: {fileID: 1160965097}
+  puzzleGenerator: {fileID: 0}
+  puzzleGluer: {fileID: 0}
+  puszzleScrollContainer: {fileID: 0}
+  puzzleGridGenerator: {fileID: 0}
+  winscreen: {fileID: 0}
 --- !u!4 &830491269
 Transform:
   m_ObjectHideFlags: 0

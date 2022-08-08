@@ -7,8 +7,8 @@ namespace UI
         [SerializeField] private RectTransform greed;
         [SerializeField] private RectTransform cellGridPrefab;
 
-        public void GenerateImagesForGridPuzzles(PuzzleGeneration.PiecePazzle[,] generatedPazzle,
-        Vector3 scaleOnBoard)
+        public void GenerateImagesForGridPuzzles(PuzzleGeneration.PiecePuzzle[,] generatedPazzle
+            , Vector3 scaleOnBoard)
         {
             foreach (var puzzle in generatedPazzle)
             {

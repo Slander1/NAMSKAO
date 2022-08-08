@@ -8,7 +8,7 @@ namespace UV
     public static class UVGenerator
     {
 
-        public static void GetVertexFromPazzle(PuzzleGeneration.PiecePazzle[,] generatedPuzzle, Texture2D picture)
+        public static void GetVertexFromPazzle(PuzzleGeneration.PiecePuzzle[,] generatedPuzzle, Texture2D picture)
         {
             var meshes = new List<MeshFilter>();
 
@@ -46,7 +46,7 @@ namespace UV
             SetPictureToPuzzle(generatedPuzzle, picture);
         }
 
-        public static void SetPictureToPuzzle(PuzzleGeneration.PiecePazzle[,] generatedPuzzle, Texture2D picture)
+        public static void SetPictureToPuzzle(PuzzleGeneration.PiecePuzzle[,] generatedPuzzle, Texture2D picture)
         {
             foreach (var piece in generatedPuzzle)
             {

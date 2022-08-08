@@ -18,7 +18,7 @@ namespace PuzzleGeneration
         public int rowsCount = 4;
 
         [Header("Puzzle prefabs Settings")]
-        [SerializeField] private PiecePazzle[] puzzlePrefabs;
+        [SerializeField] private PiecePuzzle[] puzzlePrefabs;
 
         private PiecesCollection _piecesCollections;
 
@@ -27,9 +27,9 @@ namespace PuzzleGeneration
             _piecesCollections = new PiecesCollection(puzzlePrefabs);
         }
 
-        public PiecePazzle[,] GenerateGridPuzles()
+        public PiecePuzzle[,] GenerateGridPuzles()
         {
-            var generatedPazzle = new PiecePazzle[rowsCount, columnsCount];
+            var generatedPuzzle = new PiecePuzzle[rowsCount, columnsCount];
             var randomTipsHorizontal = new bool[rowsCount, columnsCount - 1];
             var randomTipsVertical = new bool[rowsCount - 1, columnsCount];
 
@@ -56,9 +56,9 @@ namespace PuzzleGeneration
                     var namePos = DefineNamePos(pos);
                     var tips = CheckSides(pos, randomTipsHorizontal, randomTipsVertical);
 
-                    var piecePuzzle = _piecesCollections.FindSuitablePazzle(new PieceData(namePos, tips), pos);
+                    var piecePuzzle = _piecesCollections.FindSuitablePazzle(new PieceData(namePos, tips));
                     var piecePazzle = Instantiate(piecePuzzle, transform);
-
+                    piecePazzle.groupNumber = y * columnsCount + x;
                     PieceRotation.RotateTips(piecePazzle, pos, rowsCount, columnsCount);
 
                     piecePazzle.transform.position  = piecePazzle.startPos =
@@ -66,10 +66,10 @@ namespace PuzzleGeneration
                     piecePazzle.posInGreed = new Vector2Int(x, y);
                     piecePazzle.scaleOnBoard = scale;
                     piecePazzle.transform.localScale = scale;
-                    generatedPazzle[y, x] = piecePazzle;
+                    generatedPuzzle[y, x] = piecePazzle;
                 }
             }
-            return generatedPazzle;
+            return generatedPuzzle;
         }
 
         private NamePos DefineNamePos(Vector2Int currPos)
@@ -112,7 +112,8 @@ namespace PuzzleGeneration
 
         public Vector3 CalculateScale()
         {
-            return new Vector3(5.4f / (float)rowsCount, 5.4f / (float)columnsCount, 1f);
+            var maxCount = Mathf.Max(rowsCount * 2, columnsCount);
+            return new Vector3(6.2f / maxCount, 6.2f / maxCount, 1f);
         }
     }
 }

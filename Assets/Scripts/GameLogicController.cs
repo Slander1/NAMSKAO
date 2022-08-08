@@ -2,74 +2,70 @@ using UnityEngine;
 using PuzzleGeneration;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System;
 
 public class GameLogicController : MonoBehaviour
 {
 
     [Header("Generated pazzle")]
-    public PiecePazzle[,] generatedPazzle;
+    public PiecePuzzle[,] generatedPuzzle;
 
     [Header("Texture2D Settings")]
     [SerializeField] private Texture2D texture2D;
 
     [Header("Scripts")]
-    [SerializeField] private PuzzleGenerator _puzzleGenerator;
+    [SerializeField] private PuzzleGenerator puzzleGenerator;
+    [SerializeField] private PuzzleGluer puzzleGluer;
 
     [Header("UI")]
-    [SerializeField] private UI.PuzzleScrollContainer _puszzleScrollContainer;
-    [SerializeField] private UI.PuzzleGridGenerator _puzzleGridGenerator;
-    [SerializeField] private Image Winscreen;
+    [SerializeField] private UI.PuzzleScrollContainer puszzleScrollContainer;
+    [SerializeField] private UI.PuzzleGridGenerator puzzleGridGenerator;
+    [SerializeField] private Image winscreen;
 
-    private List<PiecePazzle> _puzzleOnInitPos = new List<PiecePazzle>();
     private int _rowsCount;
     private int _columnsCount;
 
 
-    void Start()
+    private void Start()
     {
         StartGame();
     }
-
-    private void OnEnable()
+    private void OnDestroy()
     {
-        PiecePazzle.PiecePazzleOnInitialPos += CheckStatePuzzle;
-    }
-
-    private void OnDisable()
-    {
-        PiecePazzle.PiecePazzleOnInitialPos += CheckStatePuzzle;
+        puzzleGluer.OnPieceMovedToPosition -= CheckToWin;
     }
 
     private void StartGame()
     {
-        _rowsCount = _puzzleGenerator.rowsCount;
-        _columnsCount = _puzzleGenerator.columnsCount;
+        _rowsCount = puzzleGenerator.rowsCount;
+        _columnsCount = puzzleGenerator.columnsCount;
 
-        var scaleOnBoard = _puzzleGenerator.CalculateScale();
+        var scaleOnBoard = puzzleGenerator.CalculateScale();
 
-        generatedPazzle = _puzzleGenerator.GenerateGridPuzles();
+        generatedPuzzle = puzzleGenerator.GenerateGridPuzles();
 
-        UV.UVGenerator.GetVertexFromPazzle(generatedPazzle, texture2D);
+        UV.UVGenerator.GetVertexFromPazzle(generatedPuzzle, texture2D);
 
-        _puzzleGridGenerator.GenerateImagesForGridPuzzles(generatedPazzle,
-           scaleOnBoard);
+        puzzleGridGenerator.GenerateImagesForGridPuzzles(generatedPuzzle, scaleOnBoard);
+        puzzleGluer.Init( generatedPuzzle);
+        puzzleGluer.OnPieceMovedToPosition += CheckToWin;
+
 
         var count = _rowsCount * _columnsCount;
-        
 
-        var listGeneratedPuzzles = new List<PiecePazzle>();
+        var listGeneratedPuzzles = new List<PiecePuzzle>();
 
         for (int y = 0; y < _rowsCount; y++)
         {
             for (int x = 0; x < _columnsCount; x++)
             {
-                listGeneratedPuzzles.Add(generatedPazzle[y, x]);
+                listGeneratedPuzzles.Add(generatedPuzzle[y, x]);
             }
         }
 
-        foreach (var UIImageForScroll in _puszzleScrollContainer.GenerateImagesToScroll(count))
+        foreach (var UIImageForScroll in puszzleScrollContainer.GenerateImagesToScroll(count))
         {
-            var i = Random.Range(0, listGeneratedPuzzles.Count);
+            var i = UnityEngine.Random.Range(0, listGeneratedPuzzles.Count);
             listGeneratedPuzzles[i].elementForScroll = UIImageForScroll;
 
             UIImageForScroll.transform.position = Vector3.zero;
@@ -82,14 +78,13 @@ public class GameLogicController : MonoBehaviour
         }
     }
 
-    private void CheckStatePuzzle(PiecePazzle piecePazzle)
+    private void CheckToWin(int pieceCurrentCount)
     {
-        if (_puzzleOnInitPos.Contains(piecePazzle))
-            return;
-
-        _puzzleOnInitPos.Add(piecePazzle);
-
-        if (_puzzleOnInitPos.Count == _rowsCount * _columnsCount)
-            Winscreen.gameObject.SetActive(true);
+        if (pieceCurrentCount == _rowsCount * _columnsCount)
+            winscreen.gameObject.SetActive(true);
     }
+
+
+
+
 }
