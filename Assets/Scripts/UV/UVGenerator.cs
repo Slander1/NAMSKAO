@@ -20,7 +20,7 @@ namespace UV
 
             var verticles = meshes.SelectMany((keyVal) => keyVal.mesh.vertices
                                   .Select(vert => keyVal.transform.TransformPoint(vert)));
-            ;
+
             var minx = verticles.Min(vertex => vertex.x);
             var maxx = verticles.Max(vertex => vertex.x);
 

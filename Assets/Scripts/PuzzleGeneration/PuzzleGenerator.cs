@@ -32,6 +32,7 @@ namespace PuzzleGeneration
             var generatedPazzle = new PiecePazzle[rowsCount, columnsCount];
             var randomTipsHorizontal = new bool[rowsCount, columnsCount - 1];
             var randomTipsVertical = new bool[rowsCount - 1, columnsCount];
+
             var scale = CalculateScale();
             Random.InitState(seed);
 
@@ -41,6 +42,7 @@ namespace PuzzleGeneration
                 {
                     if (x != columnsCount - 1)
                         randomTipsHorizontal[y, x] = Random.Range(0, 2) == 0;
+
                     if (y != rowsCount - 1)
                         randomTipsVertical[y, x] = Random.Range(0, 2) == 0;
                 }
@@ -56,7 +58,9 @@ namespace PuzzleGeneration
 
                     var piecePuzzle = _piecesCollections.FindSuitablePazzle(new PieceData(namePos, tips), pos);
                     var piecePazzle = Instantiate(piecePuzzle, transform);
+
                     PieceRotation.RotateTips(piecePazzle, pos, rowsCount, columnsCount);
+
                     piecePazzle.transform.position  = piecePazzle.startPos =
                         new Vector3(3 * x * scale.x +2, -3 * y * scale.y +3, 0);
                     piecePazzle.posInGreed = new Vector2Int(x, y);

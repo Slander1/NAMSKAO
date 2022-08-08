@@ -32,7 +32,6 @@ namespace PuzzleGeneration
 
 		public static Action<PiecePazzle> PiecePazzleOnInitialPos;
 
-
 		private void OnEnable()
 		{
 			PiecePazzleOnInitialPos += NearPiecePazzle;
@@ -43,8 +42,8 @@ namespace PuzzleGeneration
 			PiecePazzleOnInitialPos += NearPiecePazzle;
 		}
 
-        
 
+        
 
 		private bool CheckPosInGreed(Vector2Int startPos, Vector2Int checkPos)
 		{
@@ -96,12 +95,11 @@ namespace PuzzleGeneration
 		private void GiveNewInfoToNear()
         {
 			var i = 0;
-			while (i < nearPieces.Count)
-			{
-				if (CheckPosInGreed(posInGreed, nearPieces[i].posInGreed))
-					nearPieces[i].GiveListToNear(nearPieces);
-				i++;
-			}
+            foreach (var piece in nearPieces)
+            {
+				nearPieces[i].GiveListToNear(nearPieces);
+            }
+					
 		}
 
 		public void GiveListToNear(List<PiecePazzle> otherList)

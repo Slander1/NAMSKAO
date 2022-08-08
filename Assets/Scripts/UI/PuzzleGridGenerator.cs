@@ -1,20 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PuzzleGridGenerator : MonoBehaviour
+namespace UI
 {
-    [SerializeField] private RectTransform greed;
-    [SerializeField] private RectTransform cellGridPrefab;
-
-    public void GenerateImagesForGridPuzzles(PuzzleGeneration.PiecePazzle[,] generatedPazzle,
-        Vector3 scaleOnBoard)
+    public class PuzzleGridGenerator : MonoBehaviour
     {
-        foreach (var puzzle in generatedPazzle)
+        [SerializeField] private RectTransform greed;
+        [SerializeField] private RectTransform cellGridPrefab;
+
+        public void GenerateImagesForGridPuzzles(PuzzleGeneration.PiecePazzle[,] generatedPazzle,
+        Vector3 scaleOnBoard)
         {
-            var cell = Instantiate(cellGridPrefab, greed);
-            cell.transform.position = puzzle.transform.position;
-            cell.localScale = scaleOnBoard;
+            foreach (var puzzle in generatedPazzle)
+            {
+                var cell = Instantiate(cellGridPrefab, greed);
+                cell.transform.position = puzzle.transform.position;
+                cell.localScale = scaleOnBoard;
+            }
         }
     }
 }
