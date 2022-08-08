@@ -57,7 +57,6 @@ namespace PuzzleGeneration
 
 		public PiecePuzzle FindSuitablePazzle(PieceData pieceData)
 		{
-			Debug.Log(pieceData.namePos + " " + string.Join(" ",pieceData.tipsPiece));
 			return pices[pieceData.namePos][pieceData.tipsPiece];
 		}
     }
