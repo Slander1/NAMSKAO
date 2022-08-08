@@ -94,6 +94,7 @@ GameObject:
   - component: {fileID: 1187912433979712673}
   - component: {fileID: 6569322722348333575}
   - component: {fileID: 7075530698554068682}
+  - component: {fileID: -8483470232139076379}
   m_Layer: 0
   m_Name: Corner_0_0
   m_TagString: Untagged
@@ -131,7 +132,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementForScroll: {fileID: 0}
   startPos: {x: 0, y: 0, z: 0}
-  posInGreed: 0
+  posInGreed: {x: 0, y: 0}
+  onInitialPos: 0
+  nearPieces: []
   <PieceData>k__BackingField:
     namePos: 0
     tipsPiece: 02000000020000000000000000000000
@@ -150,3 +153,16 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 3, y: 3, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-8483470232139076379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6607145281094632078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cca95b7cdd8564e7a93c5c2d1f175201, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  piecePazzle: {fileID: 6569322722348333575}

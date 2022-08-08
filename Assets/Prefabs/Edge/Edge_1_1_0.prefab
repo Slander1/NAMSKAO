@@ -94,6 +94,7 @@ GameObject:
   - component: {fileID: 5500845739951356666}
   - component: {fileID: 2626494280626767456}
   - component: {fileID: 1118855770143444421}
+  - component: {fileID: -5743851656418095280}
   m_Layer: 0
   m_Name: Edge_1_1_0
   m_TagString: Untagged
@@ -133,6 +134,7 @@ MonoBehaviour:
   startPos: {x: 0, y: 0, z: 0}
   posInGreed: {x: 0, y: 0}
   onInitialPos: 0
+  nearPieces: []
   <PieceData>k__BackingField:
     namePos: 1
     tipsPiece: 01000000020000000000000001000000
@@ -151,3 +153,16 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.6, y: 2.6, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-5743851656418095280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7673740152772307877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cca95b7cdd8564e7a93c5c2d1f175201, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  piecePazzle: {fileID: 2626494280626767456}
