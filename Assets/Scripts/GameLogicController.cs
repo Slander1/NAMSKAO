@@ -2,7 +2,6 @@ using UnityEngine;
 using PuzzleGeneration;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using System;
 
 public class GameLogicController : MonoBehaviour
 {
@@ -65,7 +64,7 @@ public class GameLogicController : MonoBehaviour
 
         foreach (var UIImageForScroll in puszzleScrollContainer.GenerateImagesToScroll(count))
         {
-            var i = UnityEngine.Random.Range(0, listGeneratedPuzzles.Count);
+            var i = Random.Range(0, listGeneratedPuzzles.Count);
             listGeneratedPuzzles[i].elementForScroll = UIImageForScroll;
 
             UIImageForScroll.transform.position = Vector3.zero;
