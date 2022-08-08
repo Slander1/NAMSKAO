@@ -43,8 +43,8 @@ public class PuzzleGluer: MonoBehaviour
             foreach (var piece in GetGroup(drag.PiecePuzzle.groupNumber))
             {
                 piece.transform.position = dragPosition +
-                    new Vector3(3 * piece.posInGreed.x * scale.x, -3 *
-                    piece.posInGreed.y * scale.y, 0f);
+                    new Vector3(piece.posInGreed.x * scale.x,
+                    piece.posInGreed.y * -scale.y, 0f);
             }
         }
     }

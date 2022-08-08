@@ -113,7 +113,7 @@ namespace PuzzleGeneration
         public Vector3 CalculateScale()
         {
             var maxCount = Mathf.Max(rowsCount * 2, columnsCount);
-            return new Vector3(6.2f / maxCount, 6.2f / maxCount, 1f);
+            return new Vector3(6.4f / maxCount, 6.4f / maxCount, 1f);
         }
     }
 }
