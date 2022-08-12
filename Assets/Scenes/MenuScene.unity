@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 11
-  columnsCount: 3
+  columnsCount: 4
   rowsCount: 4
   puzzlePrefabs:
   - {fileID: 8132869555960371156, guid: a245729e168b34e0d84e8ebb3be9697c, type: 3}
@@ -170,7 +170,7 @@ MonoBehaviour:
   - {fileID: 4709051665149585271, guid: f0a23df73a3784e198da297defedc1b8, type: 3}
   - {fileID: 4349699023522424274, guid: 232e58f7200794c1c83ebbe4ccc3234f, type: 3}
   - {fileID: 5325935830443382277, guid: 0f893e637b3274961a539c0a4aa6772b, type: 3}
-  - {fileID: 6623486804656091577, guid: f006d4c8d44bd47908db4790230d672d, type: 3}
+  - {fileID: 5241215872802853494, guid: 46bfa7d3e43ec4775a2121f6fd327fe9, type: 3}
   - {fileID: 306579345900097679, guid: 1ba1f7327930a4673884063c27817b1a, type: 3}
   - {fileID: 7416477522020528287, guid: 8165526e317e3496ead76d0be87aab74, type: 3}
   - {fileID: 7864655676881154501, guid: 0bccce28689c54d9eaaf89b372d523ab, type: 3}
