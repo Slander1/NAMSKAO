@@ -153,8 +153,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 11
-  columnsCount: 4
-  rowsCount: 4
+  columnsCount: 3
+  rowsCount: 3
   puzzlePrefabs:
   - {fileID: 8132869555960371156, guid: a245729e168b34e0d84e8ebb3be9697c, type: 3}
   - {fileID: 6417052956044707735, guid: bd5bb8eede8ff4a3895201fb35d9f74c, type: 3}
