@@ -7,8 +7,6 @@ using System.Collections.Generic;
 
 public class GameLogicController : MonoBehaviour
 {
-    
-
     [Header("Texture2D Settings")]
     [SerializeField] private Texture2D texture2D;
 
@@ -20,6 +18,7 @@ public class GameLogicController : MonoBehaviour
     [SerializeField] private UI.PuzzleScrollContainer puzzleScrollContainer;
     [SerializeField] private Image winscreen;
     [SerializeField] private RectTransform container;
+    [SerializeField] private Canvas canvas;
 
     private int _rowsCount;
     private int _columnsCount;
@@ -37,7 +36,7 @@ public class GameLogicController : MonoBehaviour
     }
     private void OnDestroy()
     {
-        //_puzzleParent.OnDestroyGameLogicContoller();
+        _puzzleParent.OnDestroyGameLogicContoller();
         puzzleGluer.OnPieceMovedToPosition -= CheckToWin;
     }
 
@@ -55,10 +54,9 @@ public class GameLogicController : MonoBehaviour
         UV.UVGenerator.GetVertexFromPazzle(_generatedPuzzle, texture2D);
 
         _puzzleParent = new PuzzleParent((RectTransform)puzzleScrollContainer.transform,
-            puzzleGenerator.transform, puzzleGluer, _dragHandlers);
+            puzzleGenerator.transform, _dragHandlers, canvas);
 
-        puzzleGluer.Init(_generatedPuzzle, _dragHandlers, puzzleGenerator.CalculateScale(),
-            (RectTransform)puzzleScrollContainer.transform);
+        puzzleGluer.Init(_generatedPuzzle, _dragHandlers, puzzleGenerator.CalculateScale(), _puzzleParent);
         puzzleGluer.OnPieceMovedToPosition += CheckToWin;
 
         var count = _rowsCount * _columnsCount;

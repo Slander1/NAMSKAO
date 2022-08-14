@@ -1,39 +1,76 @@
+using System;
 using PuzzleGeneration;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using Utils;
 
 public class PuzzleParent
 {
     private RectTransform _containerTransform;
     private Transform _puzzleGeneratorTransform;
-    private PuzzleGluer _puzzleGluer;
+    private Canvas _canvas;
 
-    public PuzzleParent(RectTransform containerTransform, Transform puzzleGenerator, PuzzleGluer puzzleGluer,
-        DragHandler[] dragHandlers)
+    private DragHandler[] _dragHandlers;
+
+    public event Action<PiecePuzzle> OnChangeMauseOnBoard;
+
+    public PuzzleParent(RectTransform containerTransform, Transform puzzleGenerator,
+        DragHandler[] dragHandlers, Canvas canvas)
     {
         _containerTransform = containerTransform;
         _puzzleGeneratorTransform = puzzleGenerator;
-        _puzzleGluer = puzzleGluer;
-        SubscribeOnEvents(dragHandlers);
+        _dragHandlers = dragHandlers;
+        _canvas = canvas;
+        SubscribeOnEvents();
     }
 
-    //public void OnDestroyGameLogicContoller()
-    //{
-    //    //Unsubscribe();
-    //}
-
-    private void SubscribeOnEvents(DragHandler[] dragHandlers)
+    public void OnDestroyGameLogicContoller()
     {
-        _puzzleGluer.OnChangeMauseOnBoard += (bool OnBoard, PiecePuzzle piecePuzzle) =>
-        piecePuzzle.transform.SetParent(OnBoard ? _puzzleGeneratorTransform : _containerTransform);
-
-        foreach (var handler in dragHandlers)
-            handler.OnBeginDragging += (DragHandler handler) =>
-            handler.transform.SetParent(_puzzleGeneratorTransform);
-        // как отписаться от лямда
+        Unsubscribe();
     }
 
-    //private void Unsubscribe()
-    //{
-    //    _puzzleGluer.OnChangeMauseOnBoard -= ;
-    //}
+    private void SubscribeOnEvents()
+    {
+        foreach (var handler in _dragHandlers)
+        {
+            handler.PiecePuzzle.OnBoard = true;
+            handler.OnBeginDragging += OnBeginDrag;
+
+            handler.OnDragEnd += OnEndDrag;
+        }
+    }
+
+    private void OnBeginDrag(DragHandler handler)
+    {
+        var transform = handler.transform;
+        transform.SetParent(_puzzleGeneratorTransform);
+        transform.localScale = handler.PiecePuzzle.ScaleOnBoard;
+    }
+
+    private void OnEndDrag(DragHandler handler)
+    {
+        var onBoard = !MousePosOnBoard.IsMouseInsideContainer(_canvas,
+            _containerTransform);
+
+        var piece = handler.PiecePuzzle;
+        handler.transform.localScale = piece.OnBoard ?
+        piece.ScaleOnBoard : piece.ScaleInContainer;
+
+        piece.ElementForScroll.gameObject.SetActive(!piece.OnBoard);
+        piece.OnBoard = onBoard;
+
+        if (onBoard)
+            OnChangeMauseOnBoard?.Invoke(piece);
+
+        piece.transform.SetParent(onBoard ? _puzzleGeneratorTransform : _containerTransform);
+    }
+
+    private void Unsubscribe()
+    {
+        foreach (var handler in _dragHandlers)
+        {
+            handler.OnBeginDragging -= OnBeginDrag;
+            handler.OnDragEnd -= OnEndDrag;
+        }
+    }
 }

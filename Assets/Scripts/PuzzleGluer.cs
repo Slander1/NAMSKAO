@@ -6,29 +6,27 @@ using UnityEngine;
 
 public class PuzzleGluer: MonoBehaviour
 {
-    [SerializeField] private Canvas canvas;
-    
     private PiecePuzzle[] _piecePuzzles;
 
     private IEnumerable<PiecePuzzle> PiecesOnBoard => _piecePuzzles.Where(piece=> piece.OnBoard);
     private Vector2 _pieceDistance;
 
     private DragHandler[] _dragHandlers;
-    private RectTransform _containerTransform;
+
+    private PuzzleParent _puzzleParent;
 
     public event Action<int> OnPieceMovedToPosition;
 
-    public event Action<bool, PiecePuzzle> OnChangeMauseOnBoard;
-
-
     public void Init(PiecePuzzle[] piecePuzzles, DragHandler[] dragHandlers
-        , Vector2 pieceDistance, RectTransform rectTransform)
+        , Vector2 pieceDistance, PuzzleParent puzzleParent)
     {
         _piecePuzzles = piecePuzzles;
         _pieceDistance = pieceDistance;
-        _containerTransform = rectTransform;
         _dragHandlers = dragHandlers;
+        _puzzleParent = puzzleParent;
 
+
+        puzzleParent.OnChangeMauseOnBoard += TryGluePuzzle; 
         foreach (var item in _piecePuzzles)
             item.PiecePuzzleOnInitialPos += CheckStatePuzzle;
 
@@ -39,6 +37,8 @@ public class PuzzleGluer: MonoBehaviour
             dragHandler.OnDragging += OnDragging;
         }
     }
+
+
 
     private void OnDestroy()
     {
@@ -64,49 +64,10 @@ public class PuzzleGluer: MonoBehaviour
 
     private void OnEndDrag(DragHandler drag)
     {
-        var piece = drag.PiecePuzzle;
-        piece.ElementForScroll.gameObject.SetActive(!drag.PiecePuzzle.OnBoard);
-
-        var isMouseOnBoard = !IsMouseInsideContainer();
-
-        if (isMouseOnBoard)
-            TryGluePuzzle(piece);
-
-        drag.PiecePuzzle.OnBoard = isMouseOnBoard;
-        OnChangeMauseOnBoard?.Invoke(isMouseOnBoard, drag.PiecePuzzle);
+        
     }
     
-    private bool IsMouseInsideContainer()
-    {
-        var mousePosition = Input.mousePosition;
-        var canvasRect = ((RectTransform)canvas.transform).rect;
-        var normalizedMousePosition = new Vector2(mousePosition.x / Screen.width * canvasRect.width, mousePosition.y / Screen.height * canvasRect.height);
-        var (squareMin, squareMax) = GetRectTransformSquare(_containerTransform);
-        Debug.Log(normalizedMousePosition + " " + _containerTransform.offsetMin + " " + _containerTransform.offsetMax);
-        
-        return normalizedMousePosition.x > squareMin.x &&
-               normalizedMousePosition.x < squareMax.x &&
-               normalizedMousePosition.y > squareMin.y &&
-               normalizedMousePosition.y < squareMax.y;
-    }
-
-    private (Vector2 from, Vector2 to) GetRectTransformSquare(RectTransform rectTransform)
-    {
-        var from = rectTransform.anchorMin * ((RectTransform)canvas.transform).rect.size;
-        var to = rectTransform.anchorMax * ((RectTransform)canvas.transform).rect.size;
-
-        if (rectTransform.rect.x < 0)
-            from += Vector2.right * rectTransform.rect.x;
-        else
-            to += Vector2.right * rectTransform.rect.x;
-        
-        if (rectTransform.rect.y < 0)
-            from += Vector2.up * rectTransform.rect.y;
-        else
-            to += Vector2.up * rectTransform.rect.y;
-
-        return (from, to);
-    }
+    
     
     private void TryGluePuzzle(PiecePuzzle piece)
     {

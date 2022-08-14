@@ -27,7 +27,8 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 		_screenPoint = _camera.WorldToScreenPoint(transform.position);
 		_offset = transform.position - _camera.ScreenToWorldPoint(new Vector3(eventData.position.x,
 			eventData.position.y, _screenPoint.z));
-		//transform.localScale = PiecePuzzle.ScaleOnBoard;
+		OnBeginDragging?.Invoke(this);
+		
 	}
 
 	public void OnDrag(PointerEventData eventData)
@@ -42,8 +43,6 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 	public void OnEndDrag(PointerEventData eventData)
 	{
 		OnDragEnd?.Invoke(this);
-		transform.localScale = PiecePuzzle.OnBoard ? PiecePuzzle.ScaleOnBoard : PiecePuzzle.ScaleInContainer;
-		// ^ Ответсвенность другого класса
 		if (!PiecePuzzle.OnBoard)
 			transform.position = PiecePuzzle.ElementForScroll.position;
 	}
