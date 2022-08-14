@@ -48,7 +48,7 @@ public class GameLogicController : MonoBehaviour
         UV.UVGenerator.GetVertexFromPazzle(generatedPuzzle, texture2D);
 
         puzzleGridGenerator.GenerateImagesForGridPuzzles(generatedPuzzle, scaleOnBoard);
-        puzzleGluer.Init(generatedPuzzle, puzzleGenerator.CalculateScale(), container, puzzleGenerator.transform);
+        puzzleGluer.Init(generatedPuzzle, puzzleGenerator.CalculateScale(),(RectTransform)puzzleScrollContainer.transform, puzzleGenerator.transform);
         puzzleGluer.OnPieceMovedToPosition += CheckToWin;
 
         var count = _rowsCount * _columnsCount;
@@ -57,10 +57,10 @@ public class GameLogicController : MonoBehaviour
         var i = 0;
         foreach (var uiImageForScroll in puzzleScrollContainer.GenerateImagesToScroll(count, container))
         {
-            listGeneratedPuzzles[i].elementForScroll = uiImageForScroll;
-            listGeneratedPuzzles[i].transform.SetParent(uiImageForScroll.transform, false);
+            listGeneratedPuzzles[i].ElementForScroll = uiImageForScroll;
+            //listGeneratedPuzzles[i].transform.SetParent(uiImageForScroll.transform, false);
 
-            listGeneratedPuzzles[i].transform.localScale = listGeneratedPuzzles[i].scaleInContainer =
+            //listGeneratedPuzzles[i].transform.localScale = listGeneratedPuzzles[i].ScaleInContainer =
                new Vector3(50, 50, 1);
             i++;
         }

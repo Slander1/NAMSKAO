@@ -13,7 +13,7 @@ public class PuzzleGluer: MonoBehaviour
     private RectTransform _containerTransform;
     private Transform _puzzleGeneratorTransform;
 
-    private IEnumerable<PiecePuzzle> PiecesOnBoard => _piecePuzzles.Where(piece=> piece.onBoard);
+    private IEnumerable<PiecePuzzle> PiecesOnBoard => _piecePuzzles.Where(piece=> piece.OnBoard);
     private Vector2 _pieceDistance;
 
     public event Action<int> OnPieceMovedToPosition;
@@ -25,6 +25,7 @@ public class PuzzleGluer: MonoBehaviour
         {
             piece.PiecePuzzleOnInitialPos -= CheckStatePuzzle;
             var dragHandler = piece.GetComponent<DragHandler>();
+            // возможно TryGetComponent
             dragHandler.OnDragEnd -= OnEndDrag;
             dragHandler.OnDragging -= OnDragging;
         }
@@ -49,36 +50,36 @@ public class PuzzleGluer: MonoBehaviour
     
     private void OnDragging(DragHandler drag, Vector3 dragPosition)
     {
-        if (!drag.PiecePuzzle.onBoard) return;
+        if (!drag.PiecePuzzle.OnBoard) return;
         
         var scale = transform.localScale;
-        foreach (var piece in GetGroup(drag.PiecePuzzle.groupNumber))
+        foreach (var piece in GetGroup(drag.PiecePuzzle.GroupNumber))
         {
             piece.transform.position = dragPosition +
-                                       new Vector3(piece.posInGreed.x * scale.x,
-                                           piece.posInGreed.y * -scale.y, 0f);
+                                       new Vector3(piece.PosInGreed.x * scale.x,
+                                           piece.PosInGreed.y * -scale.y, 0f);
         }
     }
 
     private void OnEndDrag(DragHandler drag)
     {
         var piece = drag.PiecePuzzle;
-        piece.elementForScroll.gameObject.SetActive(!drag.PiecePuzzle.onBoard);
-        if (drag.PiecePuzzle.onBoard)
-        {
-            foreach (var item in GetGroup(piece.groupNumber))
-            {
-                item.transform.position = item.startPos;
-            }
-            transform.position = piece.startPos;
-            return;
-        }
+        piece.ElementForScroll.gameObject.SetActive(!drag.PiecePuzzle.OnBoard);
+        //if (drag.PiecePuzzle.OnBoard)
+        //{
+        //    foreach (var item in GetGroup(piece.GroupNumber))
+        //    {
+        //        item.transform.position = item.StartPos;
+        //    }
+        //    transform.position = piece.StartPos;
+        //    return;
+        //}
 
         var isMouseOnBoard = !IsMouseInsideContainer();
         if (isMouseOnBoard)
             TryGluePuzzle(piece);
-        drag.PiecePuzzle.onBoard = isMouseOnBoard;
-        transform.SetParent(drag.PiecePuzzle.onBoard ? _puzzleGeneratorTransform : _containerTransform);
+        drag.PiecePuzzle.OnBoard = isMouseOnBoard;
+        drag.transform.SetParent(drag.PiecePuzzle.OnBoard ? _puzzleGeneratorTransform : _containerTransform);
     }
     
     private bool IsMouseInsideContainer()
@@ -118,26 +119,26 @@ public class PuzzleGluer: MonoBehaviour
         var offsets = new List<(int groupNumber, Vector2 offset)>();
         var piecePos = piece.transform.position;
         
-        piece.onBoard = true;
+        piece.OnBoard = true;
         var findedGroups = new HashSet<int>();
         foreach (var other in PiecesOnBoard)
         {
             var otherPos = other.transform.position;
             
-            if (findedGroups.Contains(other.groupNumber)) continue;
+            if (findedGroups.Contains(other.GroupNumber)) continue;
             if (!PiecesIsNear(piecePos, otherPos, out var offset, out var isXEqual)) continue;
             if (!IsPiecesNeighbours(piece, other, isXEqual)) continue;
             
-            findedGroups.Add(other.groupNumber);
-            offsets.Add((other.groupNumber, offset));
+            findedGroups.Add(other.GroupNumber);
+            offsets.Add((other.GroupNumber, offset));
         }
             
         foreach (var item in _piecePuzzles)
         {
-            if (!findedGroups.Contains(item.groupNumber)) continue;
+            if (!findedGroups.Contains(item.GroupNumber)) continue;
             
-            item.groupNumber = piece.groupNumber;
-            item.transform.position += (Vector3)offsets[item.groupNumber].offset;
+            item.GroupNumber = piece.GroupNumber;
+            item.transform.position += (Vector3)offsets[item.GroupNumber].offset;
         }
         
     }
@@ -149,13 +150,13 @@ public class PuzzleGluer: MonoBehaviour
         if (isXEqual && (piece.transform.position.x < other.transform.position.x)
             || (!isXEqual && piece.transform.position.y > other.transform.position.y))
         {
-            firstPieceStartPosition = piece.posInGreed;
-            secondPieceStartPosition = other.posInGreed;
+            firstPieceStartPosition = piece.PosInGreed;
+            secondPieceStartPosition = other.PosInGreed;
         }
         else
         {
-            secondPieceStartPosition = piece.posInGreed;
-            firstPieceStartPosition = other.posInGreed;
+            secondPieceStartPosition = piece.PosInGreed;
+            firstPieceStartPosition = other.PosInGreed;
         }
 
         return (firstPieceStartPosition.x == secondPieceStartPosition.x &&
@@ -185,7 +186,7 @@ public class PuzzleGluer: MonoBehaviour
 
     private IEnumerable<PiecePuzzle> GetGroup(int group)
     {
-        return _piecePuzzles.Where(item => item.groupNumber == group);
+        return _piecePuzzles.Where(item => item.GroupNumber == group);
     }
 
 

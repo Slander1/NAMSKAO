@@ -59,13 +59,14 @@ namespace PuzzleGeneration
                     var piecePuzzlePrefab = _piecesCollections.FindSuitablePazzle(new PieceData(namePos, tips));
                     var pieceObject = Instantiate(piecePuzzlePrefab, Vector3.zero,
                         Quaternion.Euler(new Vector3(0, 180, 0)), transform);
-                    pieceObject.groupNumber = y * columnsCount + x;
+                    pieceObject.GroupNumber = y * columnsCount + x;
                     PieceRotation.RotateTips(pieceObject, pos, rowsCount, columnsCount);
                     
-                    pieceObject.transform.position  = pieceObject.startPos =
-                        new Vector3(x * scale.x +2, -y * scale.y +3, 0);
-                    pieceObject.posInGreed = new Vector2Int(x, y);
-                    pieceObject.scaleOnBoard = scale;
+                    pieceObject.transform.position  = pieceObject.StartPos =
+                        new Vector3(1.8f * x * scale.x, -1.8f * y * scale.y, 0);
+                    //?????
+                    pieceObject.PosInGreed = new Vector2Int(x, y);
+                    pieceObject.ScaleOnBoard = scale;
                     pieceObject.transform.localScale = scale;
                     
                     generatedPuzzle[y * columnsCount +  x] = pieceObject;

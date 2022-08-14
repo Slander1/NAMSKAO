@@ -42,7 +42,6 @@ namespace PuzzleGeneration
 					for (int i = 0; i < 4; i++)
 					{
 						var tips = PieceRotation.ShiftArray(piece.PieceData.tipsPiece.ToArray(), i);
-						Debug.Log(piece.PieceData.namePos + " " + string.Join(", ", tips));
 						pices[piece.PieceData.namePos].Add(tips, piece);
 					}
 				}
