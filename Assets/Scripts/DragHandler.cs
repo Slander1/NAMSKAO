@@ -7,9 +7,9 @@ using UnityEngine.EventSystems;
 public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
 	public PiecePuzzle PiecePuzzle { get; private set; }
-	public bool InContainer { get; set; } = true;
 	private Vector3 _screenPoint;
 	private Vector3 _offset;
+	private Camera _camera;
 
 	public event Action<DragHandler> OnDragEnd;
 	public event Action<DragHandler, Vector3> OnDragging;
@@ -17,20 +17,21 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 	private void Awake()
     {
 		PiecePuzzle = GetComponent<PiecePuzzle>();
-	}
+		_camera = Camera.main;
+    }
 
     public void OnBeginDrag(PointerEventData eventData)
 	{
-		InContainer = false;
-		_screenPoint = Camera.main.WorldToScreenPoint(transform.position);
-		_offset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(eventData.position.x,
+		_screenPoint = _camera.WorldToScreenPoint(transform.position);
+		_offset = transform.position - _camera.ScreenToWorldPoint(new Vector3(eventData.position.x,
 			eventData.position.y, _screenPoint.z));
+		transform.localScale = PiecePuzzle.scaleOnBoard;
 	}
 
 	public void OnDrag(PointerEventData eventData)
 	{
 		var cursorPoint = new Vector3(eventData.position.x, eventData.position.y, _screenPoint.z);
-		var cursorPosition = Camera.main.ScreenToWorldPoint(cursorPoint) + _offset;
+		var cursorPosition = _camera.ScreenToWorldPoint(cursorPoint) + _offset;
 		transform.position = cursorPosition;
 		OnDragging?.Invoke(this, cursorPosition);
 	}
@@ -38,12 +39,9 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 	public void OnEndDrag(PointerEventData eventData)
 	{
 		OnDragEnd?.Invoke(this);
-		transform.localScale = (InContainer) ? PiecePuzzle.scaleInContainer : PiecePuzzle.scaleOnBoard;
-	}
-
-	private void Update()
-	{
-		if (InContainer && PiecePuzzle.elementForScroll)
+		transform.localScale = PiecePuzzle.onBoard ? PiecePuzzle.scaleOnBoard : PiecePuzzle.scaleInContainer; // Ответсвенность другого класса
+		//transform.SetParent(PiecePuzzle.onBoard ? );
+		if (!PiecePuzzle.onBoard)
 			transform.position = PiecePuzzle.elementForScroll.position;
 	}
 }

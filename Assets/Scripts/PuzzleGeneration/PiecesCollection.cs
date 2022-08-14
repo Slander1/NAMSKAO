@@ -10,25 +10,19 @@ namespace PuzzleGeneration
 		{
 			bool IEqualityComparer<TipsVariant[]>.Equals(TipsVariant[] x, TipsVariant[] y)
 			{
-				return (Enumerable.SequenceEqual(x, y));
-
+				return x.SequenceEqual(y);
 			}
 
 			int IEqualityComparer<TipsVariant[]>.GetHashCode(TipsVariant[] objects)
 			{
-				if (objects != null)
+				int hash = 17;
+
+				foreach (var item in objects)
 				{
-						int hash = 17;
-
-						foreach (var item in objects)
-						{
-							hash = hash * 23 + item.GetHashCode();
-						}
-
-						return hash;
+					hash = hash * 23 + item.GetHashCode();
 				}
 
-				return 0;
+				return hash;
 			}
 		}
 		private Dictionary<NamePos, Dictionary<TipsVariant[], PiecePuzzle>> pices { get; }
@@ -48,6 +42,7 @@ namespace PuzzleGeneration
 					for (int i = 0; i < 4; i++)
 					{
 						var tips = PieceRotation.ShiftArray(piece.PieceData.tipsPiece.ToArray(), i);
+						Debug.Log(piece.PieceData.namePos + " " + string.Join(", ", tips));
 						pices[piece.PieceData.namePos].Add(tips, piece);
 					}
 				}

@@ -73,6 +73,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -6665529197627977417, guid: 39a5174c59e314e3a975d4f243426b75, type: 3}
+      propertyPath: <PieceData>k__BackingField.tipsPiece.Array.data[0]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -6665529197627977417, guid: 39a5174c59e314e3a975d4f243426b75, type: 3}
       propertyPath: <PieceData>k__BackingField.tipsPiece.Array.data[1]
       value: 2
       objectReference: {fileID: 0}

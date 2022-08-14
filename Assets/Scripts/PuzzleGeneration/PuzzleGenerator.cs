@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace PuzzleGeneration
@@ -6,8 +7,7 @@ namespace PuzzleGeneration
     {
         CAVITY = 0,
         CONVEX = 1,
-        STRAIGHT = 2,
-        UNCERTAIN = 3
+        STRAIGHT = 2
     }
 
     public class PuzzleGenerator : MonoBehaviour
@@ -27,9 +27,9 @@ namespace PuzzleGeneration
             _piecesCollections = new PiecesCollection(puzzlePrefabs);
         }
 
-        public PiecePuzzle[,] GenerateGridPuzles()
+        public PiecePuzzle[] GenerateGridPuzles()
         {
-            var generatedPuzzle = new PiecePuzzle[rowsCount, columnsCount];
+            var generatedPuzzle = new PiecePuzzle[rowsCount * columnsCount];
             var randomTipsHorizontal = new bool[rowsCount, columnsCount - 1];
             var randomTipsVertical = new bool[rowsCount - 1, columnsCount];
 
@@ -38,7 +38,7 @@ namespace PuzzleGeneration
 
             for (int y = 0; y < rowsCount; y++)
             {
-                for (int x = 0; x < columnsCount; x++)
+                for (var x = 0; x < columnsCount; x++)
                 {
                     if (x != columnsCount - 1)
                         randomTipsHorizontal[y, x] = Random.Range(0, 2) == 0;
@@ -56,17 +56,19 @@ namespace PuzzleGeneration
                     var namePos = DefineNamePos(pos);
                     var tips = CheckSides(pos, randomTipsHorizontal, randomTipsVertical);
 
-                    var piecePuzzle = _piecesCollections.FindSuitablePazzle(new PieceData(namePos, tips));
-                    var piecePazzle = Instantiate(piecePuzzle, transform);
-                    piecePazzle.groupNumber = y * columnsCount + x;
-                    PieceRotation.RotateTips(piecePazzle, pos, rowsCount, columnsCount);
-
-                    piecePazzle.transform.position  = piecePazzle.startPos =
-                        new Vector3(3 * x * scale.x +2, -3 * y * scale.y +3, 0);
-                    piecePazzle.posInGreed = new Vector2Int(x, y);
-                    piecePazzle.scaleOnBoard = scale;
-                    piecePazzle.transform.localScale = scale;
-                    generatedPuzzle[y, x] = piecePazzle;
+                    var piecePuzzlePrefab = _piecesCollections.FindSuitablePazzle(new PieceData(namePos, tips));
+                    var pieceObject = Instantiate(piecePuzzlePrefab, Vector3.zero,
+                        Quaternion.Euler(new Vector3(0, 180, 0)), transform);
+                    pieceObject.groupNumber = y * columnsCount + x;
+                    PieceRotation.RotateTips(pieceObject, pos, rowsCount, columnsCount);
+                    
+                    pieceObject.transform.position  = pieceObject.startPos =
+                        new Vector3(x * scale.x +2, -y * scale.y +3, 0);
+                    pieceObject.posInGreed = new Vector2Int(x, y);
+                    pieceObject.scaleOnBoard = scale;
+                    pieceObject.transform.localScale = scale;
+                    
+                    generatedPuzzle[y * columnsCount +  x] = pieceObject;
                 }
             }
             return generatedPuzzle;
@@ -83,8 +85,7 @@ namespace PuzzleGeneration
                 currPos.x == columnsCount - 1 || currPos.y == rowsCount - 1)
                 return NamePos.EDGE;
 
-            else
-                return NamePos.CENTER;
+            return NamePos.CENTER;
         }
 
         private TipsVariant[] CheckSides(Vector2Int curPos, bool[,] randomEdgesHorizontal, bool[,] randomEdgesVertical)
@@ -113,7 +114,7 @@ namespace PuzzleGeneration
         public Vector3 CalculateScale()
         {
             var maxCount = Mathf.Max(rowsCount * 2, columnsCount);
-            return new Vector3(6.4f / maxCount, 6.4f / maxCount, 1f);
+            return new Vector3(19.2f / maxCount, 19.2f / maxCount, 1f);
         }
     }
 }

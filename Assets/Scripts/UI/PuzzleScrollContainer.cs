@@ -1,15 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 namespace UI
 {
     public class PuzzleScrollContainer : MonoBehaviour
     {
-        [SerializeField] private RectTransform container;
         [SerializeField] private RectTransform imagePrefab;
 
-
-        public IEnumerable<RectTransform> GenerateImagesToScroll(int count)
+        public IEnumerable<RectTransform> GenerateImagesToScroll(int count, RectTransform container)
         {
             for (int i = 0; i < count; i++)
             {

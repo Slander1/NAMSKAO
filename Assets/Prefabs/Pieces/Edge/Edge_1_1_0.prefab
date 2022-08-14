@@ -84,6 +84,10 @@ PrefabInstance:
       propertyPath: <PieceData>k__BackingField.tipsPiece.Array.data[2]
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -6665529197627977417, guid: 39a5174c59e314e3a975d4f243426b75, type: 3}
+      propertyPath: <PieceData>k__BackingField.tipsPiece.Array.data[3]
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1329249394034459924, guid: 39a5174c59e314e3a975d4f243426b75, type: 3}
       propertyPath: m_Name
       value: Edge_1_1_0

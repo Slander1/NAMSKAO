@@ -13,16 +13,16 @@ namespace PuzzleGeneration
 	public class PiecePuzzle : MonoBehaviour
 	{
 		[Header("Container")]
-		public RectTransform elementForScroll;
+		[NonSerialized] public RectTransform elementForScroll;
 
 		[Header("Starts location piece")]
 		public Vector3 startPos;
 		public Vector2Int posInGreed;
 
 		[Header("")]
-		public bool onInitialPos = false;
+		public bool onBoard;
 
-		[field: SerializeField] public PieceData PieceData { get; set; }
+		[field: SerializeField] public PieceData PieceData { set; get; }
 
 		[Header("ScaleSetting")]
 		public Vector3 scaleOnBoard;
@@ -30,11 +30,15 @@ namespace PuzzleGeneration
 
 		public int groupNumber;
 
-		public Action<PiecePuzzle> PiecePazzleOnInitialPos;
+		public event Action<PiecePuzzle> PiecePuzzleOnInitialPos;
 
+		public PiecePuzzle(PieceData pieceData)
+		{
+			PieceData = pieceData;
+		}
 	}
 
-	[System.Serializable]
+	[Serializable]
 	public class PieceData
 	{
 		public NamePos namePos;
