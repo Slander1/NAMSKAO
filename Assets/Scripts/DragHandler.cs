@@ -11,7 +11,7 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 	private Vector3 _offset;
 	private Camera _camera;
 
-	//public event Action<DragHandler> OnBeginDrag;
+	public event Action<DragHandler> OnBeginDragging;
 	public event Action<DragHandler> OnDragEnd;
 	public event Action<DragHandler, Vector3> OnDragging;
 
@@ -44,7 +44,6 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 		OnDragEnd?.Invoke(this);
 		transform.localScale = PiecePuzzle.OnBoard ? PiecePuzzle.ScaleOnBoard : PiecePuzzle.ScaleInContainer;
 		// ^ Ответсвенность другого класса
-		//transform.SetParent(PiecePuzzle.onBoard ? );
 		if (!PiecePuzzle.OnBoard)
 			transform.position = PiecePuzzle.ElementForScroll.position;
 	}

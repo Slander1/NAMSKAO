@@ -64,7 +64,7 @@ namespace PuzzleGeneration
                     
                     pieceObject.transform.position  = pieceObject.StartPos =
                         new Vector3( -x * scale.x, -y * scale.y, 0);
-                    //?????
+
                     pieceObject.PosInGreed = new Vector2Int(x, y);
                     pieceObject.ScaleOnBoard = scale;
                     pieceObject.transform.localScale = scale;

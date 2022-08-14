@@ -1,14 +1,13 @@
 using UnityEngine;
 using PuzzleGeneration;
 using UnityEngine.UI;
-using System.Collections.Generic;
 using System.Linq;
 using Utils;
+using System.Collections.Generic;
 
 public class GameLogicController : MonoBehaviour
 {
-    [Header("Generated pazzle")]
-    public PiecePuzzle[] generatedPuzzle;
+    
 
     [Header("Texture2D Settings")]
     [SerializeField] private Texture2D texture2D;
@@ -19,12 +18,17 @@ public class GameLogicController : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private UI.PuzzleScrollContainer puzzleScrollContainer;
-    [SerializeField] private UI.PuzzleGridGenerator puzzleGridGenerator;
     [SerializeField] private Image winscreen;
     [SerializeField] private RectTransform container;
 
     private int _rowsCount;
     private int _columnsCount;
+
+    private PuzzleParent _puzzleParent;
+
+    public PiecePuzzle[] _generatedPuzzle;
+    private DragHandler[] _dragHandlers;
+
 
 
     private void Start()
@@ -33,6 +37,7 @@ public class GameLogicController : MonoBehaviour
     }
     private void OnDestroy()
     {
+        //_puzzleParent.OnDestroyGameLogicContoller();
         puzzleGluer.OnPieceMovedToPosition -= CheckToWin;
     }
 
@@ -43,17 +48,22 @@ public class GameLogicController : MonoBehaviour
 
         var scaleOnBoard = puzzleGenerator.CalculateScale();
 
-        generatedPuzzle = puzzleGenerator.GenerateGridPuzles();
+        _generatedPuzzle = puzzleGenerator.GenerateGridPuzles();
 
-        UV.UVGenerator.GetVertexFromPazzle(generatedPuzzle, texture2D);
+        _dragHandlers = GetDragHandlers();
 
-        puzzleGridGenerator.GenerateImagesForGridPuzzles(generatedPuzzle, scaleOnBoard);
-        puzzleGluer.Init(generatedPuzzle, puzzleGenerator.CalculateScale(),(RectTransform)puzzleScrollContainer.transform, puzzleGenerator.transform);
+        UV.UVGenerator.GetVertexFromPazzle(_generatedPuzzle, texture2D);
+
+        _puzzleParent = new PuzzleParent((RectTransform)puzzleScrollContainer.transform,
+            puzzleGenerator.transform, puzzleGluer, _dragHandlers);
+
+        puzzleGluer.Init(_generatedPuzzle, _dragHandlers, puzzleGenerator.CalculateScale(),
+            (RectTransform)puzzleScrollContainer.transform);
         puzzleGluer.OnPieceMovedToPosition += CheckToWin;
 
         var count = _rowsCount * _columnsCount;
 
-        var listGeneratedPuzzles = generatedPuzzle.Shuffle().ToArray();
+        var listGeneratedPuzzles = _generatedPuzzle.Shuffle().ToArray();
         var i = 0;
         foreach (var uiImageForScroll in puzzleScrollContainer.GenerateImagesToScroll(count, container))
         {
@@ -64,6 +74,18 @@ public class GameLogicController : MonoBehaviour
                new Vector3(50, 50, 1);
             i++;
         }
+    }
+
+    private DragHandler[] GetDragHandlers()
+    {
+        var dragHandlers = new List<DragHandler>();
+        foreach (var item in _generatedPuzzle)
+        {
+            item.TryGetComponent<DragHandler>(out var dragHandler);
+            dragHandlers.Add(dragHandler);
+        }
+        return dragHandlers.ToArray();
+
     }
 
     private void CheckToWin(int pieceCurrentCount)

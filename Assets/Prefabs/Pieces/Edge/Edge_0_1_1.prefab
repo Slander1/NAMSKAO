@@ -11,6 +11,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Edge_0_1_1
       objectReference: {fileID: 0}
+    - target: {fileID: 6135955295520372297, guid: 7f1fa3eb21d984988bfe684c5bc5f60d, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b70f47fc6e29a8e4c86e06955fbc3e27, type: 2}
     - target: {fileID: 8012293163166349347, guid: 7f1fa3eb21d984988bfe684c5bc5f60d, type: 3}
       propertyPath: m_RootOrder
       value: 0

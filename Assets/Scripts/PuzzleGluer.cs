@@ -10,75 +10,70 @@ public class PuzzleGluer: MonoBehaviour
     
     private PiecePuzzle[] _piecePuzzles;
 
-    private RectTransform _containerTransform;
-    private Transform _puzzleGeneratorTransform;
-
     private IEnumerable<PiecePuzzle> PiecesOnBoard => _piecePuzzles.Where(piece=> piece.OnBoard);
     private Vector2 _pieceDistance;
 
+    private DragHandler[] _dragHandlers;
+    private RectTransform _containerTransform;
+
     public event Action<int> OnPieceMovedToPosition;
 
-    private void OnDestroy()
-    {
-        if (_piecePuzzles == null) return;
-        foreach (var piece in _piecePuzzles)
-        {
-            piece.PiecePuzzleOnInitialPos -= CheckStatePuzzle;
-            var dragHandler = piece.GetComponent<DragHandler>();
-            // возможно TryGetComponent
-            dragHandler.OnDragEnd -= OnEndDrag;
-            dragHandler.OnDragging -= OnDragging;
-        }
-    }
+    public event Action<bool, PiecePuzzle> OnChangeMauseOnBoard;
 
-    public void Init(PiecePuzzle[] piecePuzzles, Vector2 pieceDistance, RectTransform containerTransform,
-        Transform puzzleGeneratorTransform)
+
+    public void Init(PiecePuzzle[] piecePuzzles, DragHandler[] dragHandlers
+        , Vector2 pieceDistance, RectTransform rectTransform)
     {
         _piecePuzzles = piecePuzzles;
         _pieceDistance = pieceDistance;
-        _containerTransform = containerTransform;
-        _puzzleGeneratorTransform = puzzleGeneratorTransform;
+        _containerTransform = rectTransform;
+        _dragHandlers = dragHandlers;
 
         foreach (var item in _piecePuzzles)
-        {
-            var dragHandler = item.GetComponent<DragHandler>();
             item.PiecePuzzleOnInitialPos += CheckStatePuzzle;
+
+
+        foreach (var dragHandler in _dragHandlers)
+        {
             dragHandler.OnDragEnd += OnEndDrag;
             dragHandler.OnDragging += OnDragging;
         }
     }
-    
+
+    private void OnDestroy()
+    {
+        if (_piecePuzzles != null)
+            foreach (var item in _piecePuzzles)
+                item.PiecePuzzleOnInitialPos += CheckStatePuzzle;
+
+        if (_dragHandlers != null)
+        { 
+            foreach (var dragHandler in _dragHandlers)
+            {
+                dragHandler.OnDragEnd += OnEndDrag;
+                dragHandler.OnDragging += OnDragging;
+            }
+        }
+    }
+
     private void OnDragging(DragHandler drag, Vector3 dragPosition)
     {
-        //if (!drag.PiecePuzzle.OnBoard) return;
-        
-        var scale = transform.localScale;
         foreach (var piece in GetGroup(drag.PiecePuzzle.GroupNumber))
-        {
             piece.transform.position += dragPosition;
-             //+ new Vector3(piece.PosInGreed.x * scale.x, piece.PosInGreed.y * -scale.y, 0f);
-        }
     }
 
     private void OnEndDrag(DragHandler drag)
     {
         var piece = drag.PiecePuzzle;
         piece.ElementForScroll.gameObject.SetActive(!drag.PiecePuzzle.OnBoard);
-        //if (drag.PiecePuzzle.OnBoard)
-        //{
-        //    foreach (var item in GetGroup(piece.GroupNumber))
-        //    {
-        //        item.transform.position = item.StartPos;
-        //    }
-        //    transform.position = piece.StartPos;
-        //    return;
-        //}
 
         var isMouseOnBoard = !IsMouseInsideContainer();
+
         if (isMouseOnBoard)
             TryGluePuzzle(piece);
+
         drag.PiecePuzzle.OnBoard = isMouseOnBoard;
-        drag.transform.SetParent(drag.PiecePuzzle.OnBoard ? _puzzleGeneratorTransform : _containerTransform);
+        OnChangeMauseOnBoard?.Invoke(isMouseOnBoard, drag.PiecePuzzle);
     }
     
     private bool IsMouseInsideContainer()
