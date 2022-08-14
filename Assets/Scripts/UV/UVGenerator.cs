@@ -26,8 +26,6 @@ namespace UV
             var miny = verticles.Min(vertex => vertex.y);
             var maxy = verticles.Max(vertex => vertex.y);
 
-            var size = new Vector2(Mathf.Abs(maxx - minx), Mathf.Abs(maxy - miny));
-
             foreach (var meshFilrer in meshes)
             {
                 var uv = new Vector2[meshFilrer.mesh.vertices.Length];
@@ -36,7 +34,7 @@ namespace UV
                 {
                     var vertex = meshFilrer.mesh.vertices[i];
                     var globalPosition = meshFilrer.transform.TransformPoint(vertex);
-                    uv[i] = new Vector2(Mathf.InverseLerp(minx, maxx, globalPosition.x),
+                    uv[i] = new Vector2(Mathf.InverseLerp(maxx, minx, globalPosition.x),
                         Mathf.InverseLerp(miny, maxy, globalPosition.y));
                 }
 

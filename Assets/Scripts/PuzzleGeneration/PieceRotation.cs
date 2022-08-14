@@ -29,17 +29,16 @@ namespace PuzzleGeneration
             return array;
         }
 
-
         private static int SearchCoefficient(Vector2Int pos, int rowsCount, int columnsCount)
         {
             if (pos.x == 0 && pos.y != 0)
-                return 3;
+                return 1;
 
             if (pos.x != 0 && pos.y == rowsCount - 1)
                 return 2;
 
             if (pos.x == columnsCount - 1 && pos.y != rowsCount - 1)
-                return 1;
+                return 3;
 
             return 0;
         }

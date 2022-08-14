@@ -58,9 +58,9 @@ public class GameLogicController : MonoBehaviour
         foreach (var uiImageForScroll in puzzleScrollContainer.GenerateImagesToScroll(count, container))
         {
             listGeneratedPuzzles[i].ElementForScroll = uiImageForScroll;
-            //listGeneratedPuzzles[i].transform.SetParent(uiImageForScroll.transform, false);
-
-            //listGeneratedPuzzles[i].transform.localScale = listGeneratedPuzzles[i].ScaleInContainer =
+            listGeneratedPuzzles[i].transform.SetParent(uiImageForScroll.transform, false);
+            
+            listGeneratedPuzzles[i].transform.localScale = listGeneratedPuzzles[i].ScaleInContainer =
                new Vector3(50, 50, 1);
             i++;
         }

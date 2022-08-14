@@ -63,7 +63,7 @@ namespace PuzzleGeneration
                     PieceRotation.RotateTips(pieceObject, pos, rowsCount, columnsCount);
                     
                     pieceObject.transform.position  = pieceObject.StartPos =
-                        new Vector3(1.8f * x * scale.x, -1.8f * y * scale.y, 0);
+                        new Vector3( -x * scale.x, -y * scale.y, 0);
                     //?????
                     pieceObject.PosInGreed = new Vector2Int(x, y);
                     pieceObject.ScaleOnBoard = scale;

@@ -11,8 +11,10 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 	private Vector3 _offset;
 	private Camera _camera;
 
+	//public event Action<DragHandler> OnBeginDrag;
 	public event Action<DragHandler> OnDragEnd;
 	public event Action<DragHandler, Vector3> OnDragging;
+
 
 	private void Awake()
     {
@@ -32,8 +34,9 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 	{
 		var cursorPoint = new Vector3(eventData.position.x, eventData.position.y, _screenPoint.z);
 		var cursorPosition = _camera.ScreenToWorldPoint(cursorPoint) + _offset;
-		transform.position = cursorPosition;
-		OnDragging?.Invoke(this, cursorPosition);
+		var deltaPosition = cursorPosition - transform.position; 
+		//transform.position = cursorPosition;
+		OnDragging?.Invoke(this, deltaPosition);
 	}
 
 	public void OnEndDrag(PointerEventData eventData)
