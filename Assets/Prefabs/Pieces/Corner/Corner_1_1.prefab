@@ -95,6 +95,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2237585854992392054, guid: 259c487be6136402dba7ef37cf8131d4, type: 3}
     - target: {fileID: -6665529197627977417, guid: 39a5174c59e314e3a975d4f243426b75, type: 3}
+      propertyPath: <PieceData>k__BackingField.namePos
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -6665529197627977417, guid: 39a5174c59e314e3a975d4f243426b75, type: 3}
       propertyPath: <PieceData>k__BackingField.tipsPiece.Array.data[0]
       value: 2
       objectReference: {fileID: 0}

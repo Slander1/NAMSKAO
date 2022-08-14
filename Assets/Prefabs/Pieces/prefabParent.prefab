@@ -51,8 +51,8 @@ MonoBehaviour:
   posInGreed: {x: 0, y: 0}
   onInitialPos: 0
   <PieceData>k__BackingField:
-    namePos: 0
-    tipsPiece: 00000000000000000000000000000000
+    namePos: 2
+    tipsPiece: 01000000000000000000000001000000
   scaleOnBoard: {x: 0, y: 0, z: 0}
   scaleInContainer: {x: 0, y: 0, z: 0}
   groupNumber: 0
