@@ -35,8 +35,7 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 	{
 		var cursorPoint = new Vector3(eventData.position.x, eventData.position.y, _screenPoint.z);
 		var cursorPosition = _camera.ScreenToWorldPoint(cursorPoint) + _offset;
-		var deltaPosition = cursorPosition - transform.position; 
-		//transform.position = cursorPosition;
+		var deltaPosition = cursorPosition - transform.position; ;
 		OnDragging?.Invoke(this, deltaPosition);
 	}
 

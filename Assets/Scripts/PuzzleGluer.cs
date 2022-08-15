@@ -78,8 +78,7 @@ public class PuzzleGluer: MonoBehaviour
                 other.IsGlued = true;
                 findedGroups.Add(other.GroupNumber);
                 offsets.Add(other.GroupNumber, offset);
-                Debug.Log(other.gameObject.name);
-                OnPieceGlued?.Invoke(offsets.Count);
+                
             }
         }
             
@@ -89,9 +88,12 @@ public class PuzzleGluer: MonoBehaviour
             
             item.transform.localPosition += (Vector3)offsets[item.GroupNumber];
             item.GroupNumber = piece.GroupNumber;
+            var count = PiecesOnBoard.Where(piece => piece.GroupNumber == item.GroupNumber).Count();
+            OnPieceGlued?.Invoke(count);
         }
         
     }
+
 
     private bool IsPiecesNeighbours(PiecePuzzle piece, PiecePuzzle other, bool isXEqual)
     {
@@ -109,11 +111,13 @@ public class PuzzleGluer: MonoBehaviour
             firstPieceStartPosition = other.PosInGreed;
         }
 
-        return (firstPieceStartPosition.x == secondPieceStartPosition.x &&
-                firstPieceStartPosition.y + 1 == secondPieceStartPosition.y)
-               || (firstPieceStartPosition.y == secondPieceStartPosition.y &&
-                   firstPieceStartPosition.x + 1 == secondPieceStartPosition.x);
-    }
+        if (isXEqual)
+            return firstPieceStartPosition.x == secondPieceStartPosition.x &&
+                   firstPieceStartPosition.y + 1 == secondPieceStartPosition.y;
+        else
+            return firstPieceStartPosition.y == secondPieceStartPosition.y &&
+                   firstPieceStartPosition.x + 1 == secondPieceStartPosition.x;
+}
 
     private bool PiecesIsNear(Vector2 piecePos, Vector2 otherPos, out Vector2 offset, out bool isXEqual)
     {

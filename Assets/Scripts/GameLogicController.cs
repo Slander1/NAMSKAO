@@ -28,10 +28,6 @@ public class GameLogicController : MonoBehaviour
     public PiecePuzzle[] _generatedPuzzle;
     private DragHandler[] _dragHandlers;
 
-    private IEnumerable<PiecePuzzle> _glueds => _generatedPuzzle.Where(piece => piece.OnBoard &&
-    piece.IsGlued);
-
-
     private void Start()
     {
         StartGame();
@@ -90,7 +86,7 @@ public class GameLogicController : MonoBehaviour
 
     private void CheckToWin(int count) 
     {
-        if (_glueds.Count() == _rowsCount * _columnsCount)
+        if (count == _rowsCount * _columnsCount)
             winscreen.gameObject.SetActive(true);
     }
 }
