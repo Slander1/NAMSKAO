@@ -43,7 +43,5 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 	public void OnEndDrag(PointerEventData eventData)
 	{
 		OnDragEnd?.Invoke(this);
-		if (!PiecePuzzle.OnBoard)
-			transform.position = PiecePuzzle.ElementForScroll.position;
 	}
 }

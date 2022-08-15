@@ -28,6 +28,8 @@ public class GameLogicController : MonoBehaviour
     public PiecePuzzle[] _generatedPuzzle;
     private DragHandler[] _dragHandlers;
 
+    private IEnumerable<PiecePuzzle> _glueds => _generatedPuzzle.Where(piece => piece.OnBoard &&
+    piece.IsGlued);
 
 
     private void Start()
@@ -37,7 +39,7 @@ public class GameLogicController : MonoBehaviour
     private void OnDestroy()
     {
         _puzzleParent.OnDestroyGameLogicContoller();
-        puzzleGluer.OnPieceMovedToPosition -= CheckToWin;
+        puzzleGluer.OnPieceGlued -= CheckToWin;
     }
 
     private void StartGame()
@@ -56,8 +58,8 @@ public class GameLogicController : MonoBehaviour
         _puzzleParent = new PuzzleParent((RectTransform)puzzleScrollContainer.transform,
             puzzleGenerator.transform, _dragHandlers, canvas);
 
-        puzzleGluer.Init(_generatedPuzzle, _dragHandlers, puzzleGenerator.CalculateScale(), _puzzleParent);
-        puzzleGluer.OnPieceMovedToPosition += CheckToWin;
+        puzzleGluer.Init(_generatedPuzzle, _dragHandlers, scaleOnBoard, _puzzleParent);
+        puzzleGluer.OnPieceGlued += CheckToWin;
 
         var count = _rowsCount * _columnsCount;
 
@@ -86,9 +88,9 @@ public class GameLogicController : MonoBehaviour
 
     }
 
-    private void CheckToWin(int pieceCurrentCount)
+    private void CheckToWin(int count) 
     {
-        if (pieceCurrentCount == _rowsCount * _columnsCount)
+        if (_glueds.Count() == _rowsCount * _columnsCount)
             winscreen.gameObject.SetActive(true);
     }
 }

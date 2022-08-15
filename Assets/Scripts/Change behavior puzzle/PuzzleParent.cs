@@ -1,7 +1,6 @@
 using System;
 using PuzzleGeneration;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using Utils;
 
 public class PuzzleParent
@@ -33,9 +32,7 @@ public class PuzzleParent
     {
         foreach (var handler in _dragHandlers)
         {
-            handler.PiecePuzzle.OnBoard = true;
             handler.OnBeginDragging += OnBeginDrag;
-
             handler.OnDragEnd += OnEndDrag;
         }
     }
@@ -49,20 +46,23 @@ public class PuzzleParent
 
     private void OnEndDrag(DragHandler handler)
     {
-        var onBoard = !MousePosOnBoard.IsMouseInsideContainer(_canvas,
-            _containerTransform);
-
         var piece = handler.PiecePuzzle;
-        handler.transform.localScale = piece.OnBoard ?
-        piece.ScaleOnBoard : piece.ScaleInContainer;
 
-        piece.ElementForScroll.gameObject.SetActive(!piece.OnBoard);
+        var onBoard = (piece.IsGlued) ? true:
+            !MousePosOnBoard.IsMouseInsideContainer(_canvas,_containerTransform);
+
         piece.OnBoard = onBoard;
+
+        piece.ElementForScroll.gameObject.SetActive(!onBoard);
+
+        piece.transform.SetParent(onBoard ? _puzzleGeneratorTransform : piece.ElementForScroll);
+
+        handler.transform.localScale = onBoard ? piece.ScaleOnBoard : piece.ScaleInContainer;
 
         if (onBoard)
             OnChangeMauseOnBoard?.Invoke(piece);
-
-        piece.transform.SetParent(onBoard ? _puzzleGeneratorTransform : _containerTransform);
+        else
+            piece.transform.position = piece.ElementForScroll.position;
     }
 
     private void Unsubscribe()

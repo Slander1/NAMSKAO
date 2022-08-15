@@ -18,6 +18,7 @@ namespace PuzzleGeneration
 		public Vector2Int PosInGreed { get; set; }
 
 		public bool OnBoard { get; set; }
+		public bool IsGlued { get; set; }
 
 		[field: SerializeField] public PieceData PieceData { set; get; }
 
@@ -25,8 +26,6 @@ namespace PuzzleGeneration
 		public Vector3 ScaleOnBoard { get; set; }
 		public Vector3 ScaleInContainer { get; set; }
 		public int GroupNumber { get; set; }
-
-		public event Action<PiecePuzzle> PiecePuzzleOnInitialPos;
 
 		public PiecePuzzle(PieceData pieceData)
 		{

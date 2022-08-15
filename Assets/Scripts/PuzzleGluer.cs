@@ -15,7 +15,7 @@ public class PuzzleGluer: MonoBehaviour
 
     private PuzzleParent _puzzleParent;
 
-    public event Action<int> OnPieceMovedToPosition;
+    public event Action<int> OnPieceGlued;
 
     public void Init(PiecePuzzle[] piecePuzzles, DragHandler[] dragHandlers
         , Vector2 pieceDistance, PuzzleParent puzzleParent)
@@ -25,33 +25,23 @@ public class PuzzleGluer: MonoBehaviour
         _dragHandlers = dragHandlers;
         _puzzleParent = puzzleParent;
 
-
-        puzzleParent.OnChangeMauseOnBoard += TryGluePuzzle; 
-        foreach (var item in _piecePuzzles)
-            item.PiecePuzzleOnInitialPos += CheckStatePuzzle;
-
+        _puzzleParent.OnChangeMauseOnBoard += TryGluePuzzle; 
 
         foreach (var dragHandler in _dragHandlers)
         {
-            dragHandler.OnDragEnd += OnEndDrag;
             dragHandler.OnDragging += OnDragging;
         }
     }
 
-
-
     private void OnDestroy()
     {
-        if (_piecePuzzles != null)
-            foreach (var item in _piecePuzzles)
-                item.PiecePuzzleOnInitialPos += CheckStatePuzzle;
+        _puzzleParent.OnChangeMauseOnBoard -= TryGluePuzzle;
 
         if (_dragHandlers != null)
         { 
             foreach (var dragHandler in _dragHandlers)
             {
-                dragHandler.OnDragEnd += OnEndDrag;
-                dragHandler.OnDragging += OnDragging;
+                dragHandler.OnDragging -= OnDragging;
             }
         }
     }
@@ -61,13 +51,6 @@ public class PuzzleGluer: MonoBehaviour
         foreach (var piece in GetGroup(drag.PiecePuzzle.GroupNumber))
             piece.transform.position += dragPosition;
     }
-
-    private void OnEndDrag(DragHandler drag)
-    {
-        
-    }
-    
-    
     
     private void TryGluePuzzle(PiecePuzzle piece)
     {
@@ -77,24 +60,28 @@ public class PuzzleGluer: MonoBehaviour
 
         foreach (var item in PiecesOnBoard)
         {
+            if (!item.OnBoard) continue;
             var itemPos = item.transform.localPosition;
-            if(item.GroupNumber != piece.GroupNumber) continue;
-            
+            if (item.GroupNumber != piece.GroupNumber) continue;
+
             foreach (var other in PiecesOnBoard)
             {
                 var otherPos = other.transform.localPosition;
 
-                if(other.GroupNumber == piece.GroupNumber) continue;
+                if (other.GroupNumber == piece.GroupNumber) continue;
                 if (findedGroups.Contains(other.GroupNumber)) continue;
                 if (!PiecesIsNear(itemPos, otherPos, out var offset, out var isXEqual)) continue;
                 if (!IsPiecesNeighbours(item, other, isXEqual)) continue;
+                if (!other.OnBoard) continue;
 
+                item.IsGlued = true;
+                other.IsGlued = true;
                 findedGroups.Add(other.GroupNumber);
                 offsets.Add(other.GroupNumber, offset);
+                Debug.Log(other.gameObject.name);
+                OnPieceGlued?.Invoke(offsets.Count);
             }
         }
-
-        piece.OnBoard = true;   
             
         foreach (var item in _piecePuzzles)
         {
@@ -133,8 +120,8 @@ public class PuzzleGluer: MonoBehaviour
         var comparisonsPositions = new Vector2[] { new(_pieceDistance.x, 0), new(0, _pieceDistance.y) };
         foreach (var comparison in comparisonsPositions)
         {
-            if (IsEqualDistance(otherPos.x, piecePos.x, comparison.x, 0.9f)
-                && IsEqualDistance(otherPos.y, piecePos.y, comparison.y, 0.9f))
+            if (IsEqualDistance(otherPos.x, piecePos.x, comparison.x, 0.4f)
+                && IsEqualDistance(otherPos.y, piecePos.y, comparison.y, 0.4f))
             {
                 var distanceX = DeltaDistance(otherPos.x, piecePos.x, comparison.x);
                 var distanceY = DeltaDistance(otherPos.y, piecePos.y, comparison.y);
@@ -167,12 +154,6 @@ public class PuzzleGluer: MonoBehaviour
     private IEnumerable<PiecePuzzle> GetGroup(int group)
     {
         return _piecePuzzles.Where(item => item.GroupNumber == group);
-    }
-
-
-    private void CheckStatePuzzle(PiecePuzzle piecePuzzle)
-    {
-        OnPieceMovedToPosition?.Invoke(PiecesOnBoard.Count());
     }
 
     private bool IsEqualDistance(float positionOne, float positionTwo, float requiredDistance, float equalRange)
