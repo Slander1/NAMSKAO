@@ -1,7 +1,8 @@
 ﻿using System;
+using PuzzleControllers;
 using UnityEngine;
 
-namespace PuzzleGeneration
+namespace PieceData
 {
     public enum NamePos
 	{

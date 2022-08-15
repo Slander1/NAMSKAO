@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using PuzzleControllers;
 
-namespace PuzzleGeneration
+namespace PieceData
 {
     public class PiecesCollection
 	{
-		class DictionaryComparer : IEqualityComparer<TipsVariant[]>
+		private class DictionaryComparer : IEqualityComparer<TipsVariant[]>
 		{
 			bool IEqualityComparer<TipsVariant[]>.Equals(TipsVariant[] x, TipsVariant[] y)
 			{
@@ -25,33 +25,33 @@ namespace PuzzleGeneration
 				return hash;
 			}
 		}
-		private Dictionary<NamePos, Dictionary<TipsVariant[], PiecePuzzle>> pices { get; }
 
-		public PiecesCollection(PiecePuzzle[] pieces)
+		private readonly Dictionary<NamePos, Dictionary<TipsVariant[], PiecePuzzle>> _pieces;
+
+		public PiecesCollection(IEnumerable<PiecePuzzle> pieces)
 		{
-			pices = new Dictionary<NamePos, Dictionary<TipsVariant[], PiecePuzzle>> {
+			_pieces = new Dictionary<NamePos, Dictionary<TipsVariant[], PiecePuzzle>> {
 			{ NamePos.CENTER, new Dictionary<TipsVariant[],PiecePuzzle>(new DictionaryComparer()) },
 			{ NamePos.CORNER, new Dictionary<TipsVariant[],PiecePuzzle>(new DictionaryComparer()) },
 			{ NamePos.EDGE,   new Dictionary<TipsVariant[],PiecePuzzle>(new DictionaryComparer()) } };
 			foreach (var piece in pieces)
 			{
 				if (piece.PieceData.namePos == NamePos.CENTER)
-					pices[piece.PieceData.namePos].Add(piece.PieceData.tipsPiece, piece);
+					_pieces[piece.PieceData.namePos].Add(piece.PieceData.tipsPiece, piece);
 				else
 				{
 					for (int i = 0; i < 4; i++)
 					{
-						var tips = PieceRotation.ShiftArray(piece.PieceData.tipsPiece.ToArray(), i);
-						pices[piece.PieceData.namePos].Add(tips, piece);
+						var tips = PieceRotationChanger.ShiftArray(piece.PieceData.tipsPiece.ToArray(), i);
+						_pieces[piece.PieceData.namePos].Add(tips, piece);
 					}
 				}
 			}
 		}
 
-
-		public PiecePuzzle FindSuitablePazzle(PieceData pieceData)
+		public PiecePuzzle FindSuitablePuzzle(global::PieceData.PieceData pieceData)
 		{
-			return pices[pieceData.namePos][pieceData.tipsPiece];
+			return _pieces[pieceData.namePos][pieceData.tipsPiece];
 		}
     }
 }

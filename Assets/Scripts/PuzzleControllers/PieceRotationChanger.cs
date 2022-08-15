@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+﻿using PieceData;
+using UnityEngine;
 
-namespace PuzzleGeneration
+namespace PuzzleControllers
 {
-    public static class PieceRotation
+    public static class PieceRotationChanger
     {
-
         public static void RotateTips(PiecePuzzle piece, Vector2Int pos,
             int rowsCount, int columnsCount)
         {
@@ -12,7 +12,7 @@ namespace PuzzleGeneration
             piece.PieceData.tipsPiece = ShiftArray(piece.PieceData.tipsPiece, coefficientShift);
             piece.transform.Rotate(0, 0, coefficientShift * 90);
         }
-
+        
         public static T[] ShiftArray<T>(T[] array, int shiftCount)
         {
             if (shiftCount == 0)

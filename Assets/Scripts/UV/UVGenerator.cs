@@ -1,49 +1,43 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using PieceData;
 
 namespace UV
 {
     public static class UVGenerator
     {
-
-        public static void GetVertexFromPazzle(PuzzleGeneration.PiecePuzzle[] generatedPuzzle, Texture2D picture)
+        public static void GetVertexFromPuzzle(PiecePuzzle[] generatedPuzzle, Texture2D picture)
         {
-            var meshes = new List<MeshFilter>();
+            var meshes = generatedPuzzle.Select(piece => piece.GetComponentInChildren<MeshFilter>()).ToList();
 
-            foreach (var piece in generatedPuzzle)
+            var vertices = meshes.SelectMany((keyVal) => keyVal.mesh.vertices
+                                  .Select(vert => keyVal.transform.TransformPoint(vert))).ToArray();
+
+            var minX = vertices.Min(vertex => vertex.x);
+            var maxX = vertices.Max(vertex => vertex.x);
+
+            var minY = vertices.Min(vertex => vertex.y);
+            var maxY = vertices.Max(vertex => vertex.y);
+
+            foreach (var meshFilter in meshes)
             {
-                var meshFilter = piece.GetComponentInChildren<MeshFilter>();
-                meshes.Add(meshFilter);
-            }
+                var uv = new Vector2[meshFilter.mesh.vertices.Length];
 
-            var verticles = meshes.SelectMany((keyVal) => keyVal.mesh.vertices
-                                  .Select(vert => keyVal.transform.TransformPoint(vert)));
-
-            var minx = verticles.Min(vertex => vertex.x);
-            var maxx = verticles.Max(vertex => vertex.x);
-
-            var miny = verticles.Min(vertex => vertex.y);
-            var maxy = verticles.Max(vertex => vertex.y);
-
-            foreach (var meshFilrer in meshes)
-            {
-                var uv = new Vector2[meshFilrer.mesh.vertices.Length];
-
-                for (int i = 0; i < meshFilrer.mesh.vertices.Length; i++)
+                for (int i = 0; i < meshFilter.mesh.vertices.Length; i++)
                 {
-                    var vertex = meshFilrer.mesh.vertices[i];
-                    var globalPosition = meshFilrer.transform.TransformPoint(vertex);
-                    uv[i] = new Vector2(Mathf.InverseLerp(maxx, minx, globalPosition.x),
-                        Mathf.InverseLerp(miny, maxy, globalPosition.y));
+                    var vertex = meshFilter.mesh.vertices[i];
+                    var globalPosition = meshFilter.transform.TransformPoint(vertex);
+                    uv[i] = new Vector2(Mathf.InverseLerp(maxX, minX, globalPosition.x),
+                        Mathf.InverseLerp(minY, maxY, globalPosition.y));
                 }
 
-                meshFilrer.mesh.uv = uv;
+                meshFilter.mesh.uv = uv;
             }
             SetPictureToPuzzle(generatedPuzzle, picture);
         }
 
-        public static void SetPictureToPuzzle(PuzzleGeneration.PiecePuzzle[] generatedPuzzle, Texture2D picture)
+        private static void SetPictureToPuzzle(IEnumerable<PiecePuzzle> generatedPuzzle, Texture picture)
         {
             foreach (var piece in generatedPuzzle)
             {

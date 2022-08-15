@@ -2,13 +2,14 @@
 
 namespace Utils
 {
-    public static class MousePosOnBoard
+    public static class MouseChecker
     {
         public static bool IsMouseInsideContainer(Canvas canvas, RectTransform containerTransform)
         {
             var mousePosition = Input.mousePosition;
             var canvasRect = ((RectTransform)canvas.transform).rect;
-            var normalizedMousePosition = new Vector2(mousePosition.x / Screen.width * canvasRect.width, mousePosition.y / Screen.height * canvasRect.height);
+            var normalizedMousePosition = new Vector2(mousePosition.x / Screen.width * canvasRect.width,
+                mousePosition.y / Screen.height * canvasRect.height);
             var (squareMin, squareMax) = GetRectTransformSquare(canvas, containerTransform);
             
             return normalizedMousePosition.x > squareMin.x &&

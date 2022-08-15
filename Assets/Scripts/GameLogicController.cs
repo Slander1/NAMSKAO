@@ -1,9 +1,10 @@
 using UnityEngine;
-using PuzzleGeneration;
 using UnityEngine.UI;
 using System.Linq;
 using Utils;
 using System.Collections.Generic;
+using PieceData;
+using PuzzleControllers;
 
 public class GameLogicController : MonoBehaviour
 {
@@ -23,9 +24,9 @@ public class GameLogicController : MonoBehaviour
     private int _rowsCount;
     private int _columnsCount;
 
-    private PuzzleParent _puzzleParent;
+    private PieceStateChanger _pieceStateChanger;
 
-    public PiecePuzzle[] _generatedPuzzle;
+    private PiecePuzzle[] _generatedPuzzle;
     private DragHandler[] _dragHandlers;
 
     private void Start()
@@ -34,7 +35,7 @@ public class GameLogicController : MonoBehaviour
     }
     private void OnDestroy()
     {
-        _puzzleParent.OnDestroyGameLogicContoller();
+        _pieceStateChanger.OnDestroyedGameLogicController();
         puzzleGluer.OnPieceGlued -= CheckToWin;
     }
 
@@ -49,12 +50,12 @@ public class GameLogicController : MonoBehaviour
 
         _dragHandlers = GetDragHandlers();
 
-        UV.UVGenerator.GetVertexFromPazzle(_generatedPuzzle, texture2D);
+        UV.UVGenerator.GetVertexFromPuzzle(_generatedPuzzle, texture2D);
 
-        _puzzleParent = new PuzzleParent((RectTransform)puzzleScrollContainer.transform,
+        _pieceStateChanger = new PieceStateChanger((RectTransform)puzzleScrollContainer.transform,
             puzzleGenerator.transform, _dragHandlers, canvas);
 
-        puzzleGluer.Init(_generatedPuzzle, _dragHandlers, scaleOnBoard, _puzzleParent);
+        puzzleGluer.Init(_generatedPuzzle, _dragHandlers, scaleOnBoard, _pieceStateChanger);
         puzzleGluer.OnPieceGlued += CheckToWin;
 
         var count = _rowsCount * _columnsCount;

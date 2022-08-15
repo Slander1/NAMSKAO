@@ -1,7 +1,7 @@
-using System.Collections.Generic;
+using PieceData;
 using UnityEngine;
 
-namespace PuzzleGeneration
+namespace PuzzleControllers
 {
     public enum TipsVariant
     {
@@ -56,11 +56,11 @@ namespace PuzzleGeneration
                     var namePos = DefineNamePos(pos);
                     var tips = CheckSides(pos, randomTipsHorizontal, randomTipsVertical);
 
-                    var piecePuzzlePrefab = _piecesCollections.FindSuitablePazzle(new PieceData(namePos, tips));
+                    var piecePuzzlePrefab = _piecesCollections.FindSuitablePuzzle(new PieceData.PieceData(namePos, tips));
                     var pieceObject = Instantiate(piecePuzzlePrefab, Vector3.zero,
                         Quaternion.Euler(new Vector3(0, 180, 0)), transform);
                     pieceObject.GroupNumber = y * columnsCount + x;
-                    PieceRotation.RotateTips(pieceObject, pos, rowsCount, columnsCount);
+                    PieceRotationChanger.RotateTips(pieceObject, pos, rowsCount, columnsCount);
                     
                     pieceObject.transform.position  = pieceObject.StartPos =
                         new Vector3( -x * scale.x, -y * scale.y, 0);

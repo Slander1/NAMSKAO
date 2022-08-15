@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PuzzleGeneration;
+using PieceData;
+using PuzzleControllers;
 using UnityEngine;
 
 public class PuzzleGluer: MonoBehaviour
@@ -13,19 +14,19 @@ public class PuzzleGluer: MonoBehaviour
 
     private DragHandler[] _dragHandlers;
 
-    private PuzzleParent _puzzleParent;
+    private PieceStateChanger _pieceStateChanger;
 
     public event Action<int> OnPieceGlued;
 
     public void Init(PiecePuzzle[] piecePuzzles, DragHandler[] dragHandlers
-        , Vector2 pieceDistance, PuzzleParent puzzleParent)
+        , Vector2 pieceDistance, PieceStateChanger pieceStateChanger)
     {
         _piecePuzzles = piecePuzzles;
         _pieceDistance = pieceDistance;
         _dragHandlers = dragHandlers;
-        _puzzleParent = puzzleParent;
+        _pieceStateChanger = pieceStateChanger;
 
-        _puzzleParent.OnChangeMauseOnBoard += TryGluePuzzle; 
+        _pieceStateChanger.OnChangeMouseOnBoard += TryGluePuzzle; 
 
         foreach (var dragHandler in _dragHandlers)
         {
@@ -35,14 +36,13 @@ public class PuzzleGluer: MonoBehaviour
 
     private void OnDestroy()
     {
-        _puzzleParent.OnChangeMauseOnBoard -= TryGluePuzzle;
+        _pieceStateChanger.OnChangeMouseOnBoard -= TryGluePuzzle;
 
-        if (_dragHandlers != null)
-        { 
-            foreach (var dragHandler in _dragHandlers)
-            {
-                dragHandler.OnDragging -= OnDragging;
-            }
+        if (_dragHandlers == null) return;
+        
+        foreach (var dragHandler in _dragHandlers)
+        {
+            dragHandler.OnDragging -= OnDragging;
         }
     }
 
@@ -56,7 +56,7 @@ public class PuzzleGluer: MonoBehaviour
     {
         var offsets = new Dictionary<int, Vector2>();
         
-        var findedGroups = new HashSet<int>();
+        var foundGroups = new HashSet<int>();
 
         foreach (var item in PiecesOnBoard)
         {
@@ -69,14 +69,14 @@ public class PuzzleGluer: MonoBehaviour
                 var otherPos = other.transform.localPosition;
 
                 if (other.GroupNumber == piece.GroupNumber) continue;
-                if (findedGroups.Contains(other.GroupNumber)) continue;
+                if (foundGroups.Contains(other.GroupNumber)) continue;
                 if (!PiecesIsNear(itemPos, otherPos, out var offset, out var isXEqual)) continue;
                 if (!IsPiecesNeighbours(item, other, isXEqual)) continue;
                 if (!other.OnBoard) continue;
 
                 item.IsGlued = true;
                 other.IsGlued = true;
-                findedGroups.Add(other.GroupNumber);
+                foundGroups.Add(other.GroupNumber);
                 offsets.Add(other.GroupNumber, offset);
                 
             }
@@ -84,11 +84,11 @@ public class PuzzleGluer: MonoBehaviour
             
         foreach (var item in _piecePuzzles)
         {
-            if (!findedGroups.Contains(item.GroupNumber)) continue;
+            if (!foundGroups.Contains(item.GroupNumber)) continue;
             
             item.transform.localPosition += (Vector3)offsets[item.GroupNumber];
             item.GroupNumber = piece.GroupNumber;
-            var count = PiecesOnBoard.Where(piece => piece.GroupNumber == item.GroupNumber).Count();
+            var count = PiecesOnBoard.Count(piece => piece.GroupNumber == item.GroupNumber);
             OnPieceGlued?.Invoke(count);
         }
         
@@ -124,31 +124,28 @@ public class PuzzleGluer: MonoBehaviour
         var comparisonsPositions = new Vector2[] { new(_pieceDistance.x, 0), new(0, _pieceDistance.y) };
         foreach (var comparison in comparisonsPositions)
         {
-            if (IsEqualDistance(otherPos.x, piecePos.x, comparison.x, 0.4f)
-                && IsEqualDistance(otherPos.y, piecePos.y, comparison.y, 0.4f))
+            if (!IsEqualDistance(otherPos.x, piecePos.x, comparison.x, 0.4f) ||
+                !IsEqualDistance(otherPos.y, piecePos.y, comparison.y, 0.4f)) continue;
+            
+            var distanceX = DeltaDistance(otherPos.x, piecePos.x, comparison.x);
+            var distanceY = DeltaDistance(otherPos.y, piecePos.y, comparison.y);
+            int signX;
+            int signY;
+            if (comparison.x == 0f)
             {
-                var distanceX = DeltaDistance(otherPos.x, piecePos.x, comparison.x);
-                var distanceY = DeltaDistance(otherPos.y, piecePos.y, comparison.y);
-                int signX;
-                int signY;
-                if (comparison.x == 0f)
-                {
-                    signX = (Mathf.Abs(otherPos.x - piecePos.x) > comparison.x) == (otherPos.x < piecePos.x) ? 1 : -1;
-                    signY = (Mathf.Abs(otherPos.y - piecePos.y) > comparison.y) == (otherPos.y < piecePos.y) ? 1 : -1;
-                }
-                else
-                {
-                    signX = (Mathf.Abs(otherPos.x - piecePos.x) > comparison.x) == (otherPos.x < piecePos.x) ? 1 : -1;
-                    signY = (Mathf.Abs(otherPos.y - piecePos.y) > comparison.y) == (otherPos.y < piecePos.y) ? 1 : -1;
-                }
-
-                offset.x = distanceX * signX;
-                offset.y = distanceY * signY;
-               //offset.x = comparison.x - (otherPos.x - piecePos.x);
-               //offset.y = comparison.y - (otherPos.y - piecePos.y);
-                isXEqual = comparison.x == 0; 
-                return true;
+                signX = (Mathf.Abs(otherPos.x - piecePos.x) > comparison.x) == (otherPos.x < piecePos.x) ? 1 : -1;
+                signY = (Mathf.Abs(otherPos.y - piecePos.y) > comparison.y) == (otherPos.y < piecePos.y) ? 1 : -1;
             }
+            else
+            {
+                signX = (Mathf.Abs(otherPos.x - piecePos.x) > comparison.x) == (otherPos.x < piecePos.x) ? 1 : -1;
+                signY = (Mathf.Abs(otherPos.y - piecePos.y) > comparison.y) == (otherPos.y < piecePos.y) ? 1 : -1;
+            }
+
+            offset.x = distanceX * signX;
+            offset.y = distanceY * signY;
+            isXEqual = comparison.x == 0; 
+            return true;
         }
         offset = Vector2.zero;
         isXEqual = false;
@@ -160,12 +157,12 @@ public class PuzzleGluer: MonoBehaviour
         return _piecePuzzles.Where(item => item.GroupNumber == group);
     }
 
-    private bool IsEqualDistance(float positionOne, float positionTwo, float requiredDistance, float equalRange)
+    private static bool IsEqualDistance(float positionOne, float positionTwo, float requiredDistance, float equalRange)
     {
         return DeltaDistance(positionOne, positionTwo, requiredDistance) <= equalRange;
     }
 
-    private float DeltaDistance(float positionOne, float positionTwo, float requiredDistance)
+    private static float DeltaDistance(float positionOne, float positionTwo, float requiredDistance)
     {
         var distance = Mathf.Abs(positionOne - positionTwo);
         return Mathf.Abs(distance - requiredDistance);
